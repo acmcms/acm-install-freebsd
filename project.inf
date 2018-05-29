@@ -1,0 +1,3 @@
+Name: acm-install-freebsd
+Info: acmbsd utility installer
+Provides: acm/acm-install-freebsd 
