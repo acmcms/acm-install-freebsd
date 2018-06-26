@@ -18,7 +18,7 @@ test `id -u` != 0 && echo 'ERROR: Must be root!' && exit 1
 
 ######################################
 if [ -d "/usr/local/myx.distro/local-deploy-cache" ] ; then
-	export ENV_FETCH_LOCAL_CACHE="/usr/local/myx.distro/local-deploy-cache"
+	ENV_FETCH_LOCAL_CACHE="/usr/local/myx.distro/local-deploy-cache"; export ENV_FETCH_LOCAL_CACHE
 fi
 
 which -s myx.common || ( fetch https://raw.githubusercontent.com/myx/os-myx.common/master/sh-scripts/install-myx.common.sh -o - | sh -e )
