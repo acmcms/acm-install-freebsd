@@ -1620,27 +1620,6 @@ case $COMMAND in
 		load.module conf pkg pgsql
 		echo Prepareing BSD...
 		mail.aliases.check
-		System.fs.dir.create ${ACMBSDPATH}/.ssh
-		echo -n Check for keys...
-		if [ ! -f "${ACMBSDPATH}/.ssh/id_rsa" -o ! -f "${ACMBSDPATH}/.ssh/id_rsa.pub" ]; then
-			ssh-keygen -q -N "" -f ${ACMBSDPATH}/.ssh/id_rsa -t rsa
-			out.status green CREATED
-		else
-			out.status green FOUND
-		fi
-		## Keeps SSH connection
-		base.file.checkLine /etc/ssh/sshd_config '^ClientAliveInterval*' 'ClientAliveInterval 60'
-		base.file.checkLine /etc/ssh/sshd_config '^ClientAliveCountMax*' 'ClientAliveCountMax 10'
-		##
-		sys.grp.chk $SCRIPTNAME
-		sys.usr.chk $SCRIPTNAME && sys.usr.setHome $SCRIPTNAME $ACMBSDPATH
-
-
-		base.file.checkLine /etc/rc.conf sshd_enable=\"YES\"
-		base.file.checkLine /etc/rc.conf fsck_y_enable=\"YES\"
-		base.file.checkLine /etc/rc.conf named_enable=\"YES\"
-		base.file.checkLine /etc/rc.conf ntpdate_enable=\"YES\"
-		base.file.checkLine /etc/rc.conf ntpdate_flags 'ntpdate_flags="-b pool.ntp.org europe.pool.ntp.org time.euro.apple.com"'
 
 		# conf.install profile.sh /etc/profile
 		# conf.install inputrc /etc/inputrc
@@ -1656,7 +1635,7 @@ case $COMMAND in
 
 		conf.install nanorc /usr/local/etc/nanorc
 
-		BATCH="YES" POSTFIX_DEFAULT_MTA="YES" pkg.install postfix mail/postfix
+		# BATCH="YES" POSTFIX_DEFAULT_MTA="YES" pkg.install postfix mail/postfix
 		mail.check
 
 		pgsql.check
