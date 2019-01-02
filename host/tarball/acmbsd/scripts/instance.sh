@@ -216,7 +216,7 @@ THIS.start() {
 						fi
 					fi
 				done
-				if [ "`cat $THIS_OUT | fgrep 'init finished'`" ]; then
+				if [ "`cat $THIS_OUT | fgrep 'stage2 init finished'`" ]; then
 					out.status green DONE
 					break;
 				fi
