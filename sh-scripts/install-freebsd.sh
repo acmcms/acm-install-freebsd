@@ -39,6 +39,8 @@ pkg install -y sudo bash nano screen curl postfix metamail rsync rlwrap elinks x
 # ACMBSDPATH=/usr/local/acmbsd
 # SCRIPTNAME=acmbsd
 
+myx.common lib/installUser acmbsd "ACMBSD pseudo-user" 191 /usr/local/acmbsd
+
 mkdir -p /usr/local/acmbsd/.ssh
 chown acmbsd:acmbsd /usr/local/acmbsd/.ssh
 chmod 700 /usr/local/acmbsd/.ssh
@@ -54,7 +56,6 @@ fi
 myx.common lib/fetchStdout https://github.com/acmcms/acm-install-freebsd/archive/master.tar.gz | \
 		tar zxvf - -C /usr/local/ --include "*/host/tarball/*" --include "*/host-freebsd/tarball/*" --strip-components 3
 
-myx.common lib/installUser acmbsd "ACMBSD pseudo-user" 191 /usr/local/acmbsd
 
 ######################################
 
