@@ -244,7 +244,7 @@ System.changeRights() {
 Network.git.fetch() {
 	if [ ! -d ${2} ]; then
 		git clone ${1} ${2} || return 1
-	else if [ -d ${2}/.git ]; then
+	elif [ -d ${2}/.git ]; then
 		cd ${2}
 		git pull || return 1
 	fi
