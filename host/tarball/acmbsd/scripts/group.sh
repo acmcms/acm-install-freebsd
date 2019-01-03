@@ -126,8 +126,7 @@ THIS.setBranch() {
 		out.valuechange branch THIS $1 `THIS.getBranch`
 		cfg.setValue THIS-branch $1
 		out.status green CHANGED
-		[ -d "$ACMCM5PATH/$1" ] || mkdir -p $ACMCM5PATH/$1
-		out.message "update && restart me"
+		out.message "acmbsd update THIS -agree && acmbsd restart THIS"
 	fi
 }
 THIS.getBranch() {

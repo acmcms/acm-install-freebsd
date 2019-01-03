@@ -244,9 +244,9 @@ System.changeRights() {
 Network.git.fetch() {
 	if [ ! -d ${2} ]; then
 		git clone ${1} ${2} || return 1
-	else
+	else if [ -d ${2}/.git ]; then
 		cd ${2}
-		git pull --prune || return 1
+		git pull || return 1
 	fi
 }
 cvsacmcm() {
