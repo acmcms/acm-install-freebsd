@@ -1,49 +1,25 @@
 ACMBSD automation script for ACMCMS on FreeBSD OS
 
-1. Install
+1.0 Install FreeBSD
 
-First you need to install FreeBSD
+First you need to install FreeBSD: https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/bsdinstall.html
+
 Do next sections after you get terminal access
 
-1.1. Get script
+1.1 Get script
 
-*Method 0. Oneliner
 ```
 pkg install -y ca_root_nss
 fetch https://raw.githubusercontent.com/acmcms/acm-install-freebsd/master/sh-scripts/install-freebsd.sh -o - | sh -e
 ```
 
-*Method 1. CVS
-```
-cvs -d :pserver:guest:guest@cvs.myx.ru:/var/ae3 -fq -z 6 checkout -d acmbsd acm-install-freebsd/scripts
-```
-*Method 2. GIT
-Requirements: FreeBSD, Port Tree
-```
-pkg install -y git
-git clone git://github.com/vlapan/acmbsd.git
-```
-
-1.2. Prepare system
-```
-cd acmbsd
-chmod +x acmbsd.sh
-./acmbsd.sh preparebsd 	# install ports and configure system
-reboot
-```
-1.3. Install script
-```
-cd acmbsd
-./acmbsd.sh install
-```
-
-1.4. Add new group of instances
+1.2 Add new group of instances
 ```
 acmbsd add live
 acmbsd update live
 ```
 
-1.5. Configure system and group
+1.3 Configure system and group
 
 To see config command syntax and available group list execute this command:
 `acmbsd config`
@@ -60,10 +36,10 @@ Change available memory:
 Check other group settings:
 `acmbsd config live`
 
-1.6. Start group of instances
+1.4 Start group of instances
 `acmbsd start live`
 
-1.7. Adding new host to cluster
+1.5 Adding new host to cluster
 ```
 acmbsd cluster activate
 acmbsd cluster addto -host=user@cluster.example.org
