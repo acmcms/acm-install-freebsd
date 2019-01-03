@@ -122,24 +122,12 @@ Database.counters.correct() {
 	done
 	out.status green OK
 }
-Database.template.update() {
-	out.message "Fetching db-template..." waitstatus
-	if Network.cvs.fetch /var/ae3 db-template ae3/distribution/acm.cm5/bsd/db-template > /dev/null 2>&1 ; then
-		out.status green DONE
-	else
-		out.status red FAILED
-	fi
-}
 Network.getInterfaceByIP() {
 	[ $1 ] && IP=$1 || return 1
 	for ITEM in `/sbin/ifconfig -lu`; do
 		/sbin/ifconfig $ITEM | fgrep -q $IP && echo $ITEM && return 0
 	done
 	return 1
-}
-Network.cvs.fetch() {
-	echo cvs -d :pserver:guest:guest@cvs.myx.ru:$1 -fq -z 6 checkout -P -d $2 $3
-	cvs -d :pserver:guest:guest@cvs.myx.ru:$1 -fq -z 6 checkout -P -d $2 $3 || return 1
 }
 IPOCT='(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
 LASTIPOCT='(25[0-4]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
@@ -253,36 +241,36 @@ System.changeRights() {
 	chown $REQURSIVE $3:$2 $1 && chmod $REQURSIVE $RIGHTS $1
 	out.status green DONE && return 0
 }
+Network.git.fetch() {
+	if [ ! -d ${2} ]; then
+		git clone ${1} ${2} || return 1
+	else
+		cd ${2}
+		git pull --prune || return 1
+	fi
+}
 cvsacmcm() {
 	ONLYCHECK=$3
 	RETVAL=0
 	System.fs.dir.create $ACMCM5PATH > /dev/null 2>&1
 	cd $ACMCM5PATH
-	out.message "Fetching ACM.CM5 (sys-$1) version..." waitstatus
-	if Network.cvs.fetch /var/share tmp export/sys-$1/version/version ; then
-		out.status green DONE
-	else
-		out.status red FAILED
-		RETVAL=1
-	fi
-	if [ -f tmp/version ]; then
-		CVSVERSION=`cat tmp/version 2> /dev/null`
-		if [ "$CVSVERSION" ]; then
-			#TODO: use function for getting option
-			if [ "`echo $OPTIONS | fgrep -w force`" -o -z "$ONLYCHECK" -a "$2" != $CVSVERSION ]; then
-				out.message "ACM.CM5 (sys-$1) version: Latest - '$CVSVERSION', Local - '$2'"
-				out.message "Fetching latest ACM.CM5 (sys-$1)..."
-				if Network.cvs.fetch /var/share $1 export/sys-$1 ; then
-					out.message 'Finish...' waitstatus
-					out.status green OK
-				else
-					out.message 'Finish...' waitstatus
-					out.status red ERROR
-					RETVAL=1
-				fi
+	out.message "Fetching ACM.CM5 (export-$1) version..." waitstatus
+	LATEST_VERSION=$(fetch https://raw.githubusercontent.com/acmcms/export-${1}/master/version/version -qo -)
+	if [ "$LATEST_VERSION" ]; then
+		#TODO: use function for getting option
+		if [ "`echo $OPTIONS | fgrep -w force`" -o -z "$ONLYCHECK" -a "$2" != $LATEST_VERSION ]; then
+			out.message "ACM.CM5 (export-$1) version: Latest - '$LATEST_VERSION', Local - '$2'"
+			out.message "Fetching latest ACM.CM5 (export-$1)..."
+			if Network.git.fetch https://github.com/acmcms/export-$1 $1; then
+				out.message 'Finish...' waitstatus
+				out.status green OK
 			else
-				out.message "ACM.CM5 (sys-$1) version already updated to $CVSVERSION"
+				out.message 'Finish...' waitstatus
+				out.status red ERROR
+				RETVAL=1
 			fi
+		else
+			out.message "ACM.CM5 (export-$1) version already updated to $LATEST_VERSION"
 		fi
 	fi
 	rm -rdf tmp
@@ -345,49 +333,6 @@ System.cooldown() {
 		sleep 1
 		echo -n .
 	done
-}
-Script.update.check() {
-	cd $ACMBSDPATH
-	rm -rdf tmp
-	mkdir -p tmp
-	out.message "Fetching ACMBSD version from CVS..." waitstatus
-	if Network.cvs.fetch /var/ae3 tmp acm-install-freebsd/scripts/version > /dev/null 2>&1 ; then
-		out.status green DONE
-		CVSVERSION=`cat tmp/version`
-		rm -rdf tmp
-	else
-		out.status red FAILED
-	fi
-	if [ "$CVSVERSION" ]; then
-		out.message "ACMBSD version: Latest - '$CVSVERSION', Local - '$VERSION'"
-		if [ ! -e "$ACMBSDPATH/scripts/acmbsd.sh" -o $CVSVERSION -gt $VERSION -o "$(echo $OPTIONS | fgrep -w now)" ]; then
-			return 0
-		fi
-	fi
-	return 1
-}
-Script.update.fetch () {
-	out.message "Fetching ACMBSD..." waitstatus
-	if Network.cvs.fetch /var/ae3 scripts acm-install-freebsd/scripts > /dev/null 2>&1 ; then
-		out.status green DONE
-		chmod 775 $ACMBSDPATH/scripts/acmbsd.sh
-		out.message "Running 'acmbsd install -noupdate'..." waitstatus
-		if $ACMBSDPATH/scripts/acmbsd.sh install -noupdate > /dev/null 2>&1 ; then
-			out.status green DONE
-			mail.send "<html><p>acmbsd script updated from '<b>$VERSION</b>' to '<b>$CVSVERSION</b>' version</p></html>" "acmbsd script updated" html
-		else
-			out.status red FAILED
-		fi
-	else
-		out.status red FAILED
-	fi
-}
-Script.update () {
-	if Script.update.check || Console.isOptionExist clean; then
-		Console.isOptionExist clean && rm ${ACMBSDPATH}/scripts/acmbsd.sh
-		Script.update.fetch
-	fi
-	Database.template.update
 }
 sys.grp.chk() {
 	[ "$1" ] || return 1
@@ -850,7 +795,6 @@ System.checkPermisson || { System.runAsUser root "$RUNSTR"; exit 1; }
 ARCH=`uname -p`
 OSVERSION="`uname -r` (`uname -v | sed 's/  / /g' | cut -d' ' -f5-6`)"
 OSMAJORVERSION=`uname -r | cut -d. -f1`
-CVSREPO=cvs.myx.ru
 #OLD: PATH="${PATH:+$PATH:}/usr/local/bin"
 HOSTNAME=`hostname`
 
@@ -1104,7 +1048,6 @@ case $COMMAND in
 		case $GROUPNAME in
 			all)
 				out.message "Command '$COMMAND' running" no "[$COMMAND]"
-				# Script.update
 				for ITEM in `ls $ACMCM5PATH/$BRANCH`; do
 					VERSIONFILE=$ACMCM5PATH/$ITEM/version/version
 					cvsacmcm $ITEM `cat $VERSIONFILE 2> /dev/null || echo 0`
@@ -1113,7 +1056,7 @@ case $COMMAND in
 			;;
 			system)
 				out.message "Command '$COMMAND' running" no "[$COMMAND]"
-				Script.update
+				fetch https://raw.githubusercontent.com/acmcms/acm-install-freebsd/master/sh-scripts/install-freebsd.sh -o - | sh -e
 			;;
 			geo)
 				Command.depend.activeGroup
@@ -1147,7 +1090,6 @@ case $COMMAND in
 			;;
 			check)
 				out.message "Command '$COMMAND' running" no "[$COMMAND]"
-				Script.update.check
 				for ITEM in `ls $ACMCM5PATH/$BRANCH`; do
 					VERSIONFILE=$ACMCM5PATH/$ITEM/version/version
 					cvsacmcm $ITEM `cat $VERSIONFILE 2> /dev/null || echo 0` onlycheck
@@ -1626,7 +1568,7 @@ case $COMMAND in
 		# conf.install login.conf /etc/login.conf
 		# cap_mkdb /etc/login.conf
 
-		pkg.install cvs- devel/cvs
+		pkg.install git- devel/git
 		conf.install screenrc /usr/local/etc/screenrc
 
 		conf.install sudoers /usr/local/etc/sudoers
