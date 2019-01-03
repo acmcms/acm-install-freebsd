@@ -6,10 +6,21 @@ First you need to install FreeBSD: https://www.freebsd.org/doc/en_US.ISO8859-1/b
 
 Do next sections after you get terminal access
 
-1.1 Get script
+1.1 Install acmbsd
 
+1.1.1 Install root certificate bundle
 ```
 pkg install -y ca_root_nss
+```
+
+1.1.2 Switch **pkg** to **latest** repo
+```
+mkdir -p /usr/local/etc/pkg/repos
+echo 'FreeBSD: { url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+```
+
+1.1.3 Fetch and run installation script
+```
 fetch https://raw.githubusercontent.com/acmcms/acm-install-freebsd/master/sh-scripts/install-freebsd.sh -o - | sh -e
 ```
 
