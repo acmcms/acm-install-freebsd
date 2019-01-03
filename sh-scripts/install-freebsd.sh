@@ -14,7 +14,7 @@ echo 'ACM BSD Installer started...'
 #
 # Check user
 #
-test `id -u` != 0 && echo 'ERROR: Must be root!' && exit 1
+test `id -u` != 0 && echo 'ERROR: Must be root!' >&2 && exit 1
 
 ######################################
 if [ -d "/usr/local/myx.distro/local-deploy-cache" ] ; then
@@ -54,12 +54,15 @@ else
 fi
 
 myx.common lib/fetchStdout https://github.com/acmcms/acm-install-freebsd/archive/master.tar.gz | \
-		tar zxvf - -C /usr/local/ --include "*/host/tarball/*" --include "*/host-freebsd/tarball/*" --strip-components 3
+		tar zxvf - -C /usr/local/ --include "*/host/tarball/*" --strip-components 3
 
 
 ######################################
 
-echo "Not yet! BETA BETA BETA"
-
 bash /usr/local/acmbsd/scripts/acmbsd.sh preparebsd
 bash /usr/local/acmbsd/scripts/acmbsd.sh install -noupdate
+
+
+echo "The 'acmbsd' script installed and seems to be ready." >&2
+echo "Type 'acmbsd' in shell prompt." >&2
+
