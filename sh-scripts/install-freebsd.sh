@@ -63,5 +63,6 @@ bash /usr/local/acmbsd/scripts/acmbsd.sh preparebsd
 bash /usr/local/acmbsd/scripts/acmbsd.sh install -noupdate
 
 
-echo "The 'acmbsd' script installed and seems to be ready.\nType 'acmbsd' in command prompt."  >&2
+echo "The 'acmbsd' script installed and seems to be ready." >&2
+echo "\tType 'acmbsd' in command prompt." >&2
 
