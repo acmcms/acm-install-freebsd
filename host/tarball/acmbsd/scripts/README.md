@@ -16,7 +16,7 @@ fetch https://raw.githubusercontent.com/acmcms/acm-install-freebsd/master/sh-scr
 1.2 Add new group of instances
 ```
 acmbsd add live
-acmbsd update live
+acmbsd update live -agree
 ```
 
 1.3 Configure system and group
