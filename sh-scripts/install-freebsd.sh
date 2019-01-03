@@ -59,6 +59,44 @@ myx.common lib/fetchStdout https://github.com/acmcms/acm-install-freebsd/archive
 
 ######################################
 
+
+myx.common lib/replaceLine /boot/loader.conf '^ipfw_load=*' 'ipfw_load="yes"'
+myx.common lib/replaceLine /boot/loader.conf '^ipfw_nat_load=*' 'ipfw_nat_load="yes"'
+
+cat > /usr/local/etc/ipfw.sh <<- 'EOF'
+	#!/bin/sh
+	
+	# 
+	
+	/sbin/ipfw delete 375
+	/sbin/ipfw add 375 allow tcp from any to me dst-port 22 in
+	
+	/sbin/ipfw delete 475
+	/sbin/ipfw add 475 allow ip from me to any
+
+	/sbin/ipfw delete 575
+	(cat /usr/local/etc/acmbsd-instance-list || true) | while read -r line; do 
+		/sbin/ipfw add 575 fwd $line,14022 tcp from any to me dst-port 14022 in
+		/sbin/ipfw add 575 fwd $line,14080 tcp from any to me dst-port 80 in
+		/sbin/ipfw add 575 fwd $line,14443 tcp from any to me dst-port 443 in
+		/sbin/ipfw add 575 fwd $line,14081 tcp from 172.16.0.0/16 to me dst-port 81 in
+		/sbin/ipfw add 575 fwd $line,14081 tcp from 192.168.0.0/16 to me dst-port 81 in
+	done
+	
+	/sbin/ipfw delete 675
+	/sbin/ipfw add 675 allow ip from any to me dst-port 53 in 
+	
+	/sbin/ipfw delete 10975
+	/sbin/ipfw add 10975 allow ip from any to me
+EOF
+chmod 755 /usr/local/etc/ipfw.sh
+
+
+sysrc firewall_enable=YES
+sysrc firewall_script=/usr/local/etc/ipfw.sh
+sysrc firewall_type=OPEN
+
+
 bash /usr/local/acmbsd/scripts/acmbsd.sh preparebsd
 bash /usr/local/acmbsd/scripts/acmbsd.sh install -noupdate
 
