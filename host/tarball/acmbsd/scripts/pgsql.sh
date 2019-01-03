@@ -11,6 +11,6 @@ pgsql.check() {
 
 	pkg.install postgresql*-server databases/postgresql11-server
 
-	chown -R pgsql:pgsql /usr/local/share/postgresql
-	chown -R pgsql:pgsql /usr/local/lib/postgresql
+	chown -R ${PGROOTUSER}:${PGROOTUSER} /usr/local/share/postgresql
+	chown -R ${PGROOTUSER}:${PGROOTUSER} /usr/local/lib/postgresql
 }

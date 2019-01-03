@@ -90,26 +90,24 @@ Database.h2.restore() {
 	java -cp $PUBLIC/axiom/h2-*.jar org.h2.tools.RunScript -url jdbc:h2:$DBDIR/$ITEM -user sa -script $BACKUPDIR/$ITEM/$ITEM.zip -options compression zip;
 }
 Database.check() {
-	echo '\q' | /usr/local/bin/psql $1 pgsql > /dev/null 2>&1 && return 0 || return 1
+	echo '\q' | /usr/local/bin/psql $1 ${PGROOTUSER} > /dev/null 2>&1 && return 0 || return 1
 }
 Database.create() {
 	if ! Database.check $1 ; then
-		cp ${DBTEMPLATEFILE} /usr/local/pgsql
-		su - pgsql -c "createdb $1"
-		su - pgsql -c "pg_restore -d $1 /usr/local/pgsql/acmbsd.backup"
-		rm /usr/local/pgsql/acmbsd.backup
+		su - ${PGROOTUSER} -c "createdb $1"
+		su - ${PGROOTUSER} -c "pg_restore -d $1 ${DBTEMPLATEFILE}"
 		return 0
 	else
 		return 1
 	fi
 }
 Database.getSize() {
-	/usr/local/bin/psql -tA -c "select pg_size_pretty(pg_database_size('$1'))" postgres pgsql | tr -d ' ' | tr -d 'B' | tr 'k' 'K'
+	/usr/local/bin/psql -tA -c "select pg_size_pretty(pg_database_size('$1'))" postgres ${PGROOTUSER} | tr -d ' ' | tr -d 'B' | tr 'k' 'K'
 }
 Database.counter.set() {
 	TABLE=`echo $2 | cut -d_ -f1`
 	FIELD=`echo $2 | cut -d_ -f2`
-	/usr/local/bin/psql -tA -c "select setval('${2}_seq', (select max($FIELD) from $TABLE))" $1 pgsql
+	/usr/local/bin/psql -tA -c "select setval('${2}_seq', (select max($FIELD) from $TABLE))" $1 ${PGROOTUSER}
 }
 Database.counters.correct() {
 	COUNTERS="d1dictionary_code d1folders_fldluid d1queue_queluid d1sources_srcluid m1inbox_msgluid m1queue_msgluid m1sent_msgluid s3tree_lnkluid s3dictionary_code"
@@ -514,19 +512,19 @@ dbuserscheck() {
 	for ITEM in $SERVERSDATA; do
 		ID=`echo $ITEM | cut -d'|' -f1`
 		PASSWORD=`echo $ITEM | cut -d'|' -f2`
-		[ -z "$(/usr/local/bin/psql -tAc "\\du \"$ID\"" postgres pgsql)" ] && echo "CREATE USER \"$ID\";" | /usr/local/bin/psql postgres pgsql -q
+		[ -z "$(/usr/local/bin/psql -tAc "\\du \"$ID\"" postgres ${PGROOTUSER})" ] && echo "CREATE USER \"$ID\";" | /usr/local/bin/psql postgres ${PGROOTUSER} -q
 		{
 			echo 'BEGIN;'
-			if [ -z "$(/usr/local/bin/psql -tAc "\\du access" "$ID" pgsql)" ]; then echo "CREATE GROUP access;"; fi
+			if [ -z "$(/usr/local/bin/psql -tAc "\\du access" "$ID" ${PGROOTUSER})" ]; then echo "CREATE GROUP access;"; fi
 			cat <<-EOF
 				ALTER USER "$ID" ENCRYPTED PASSWORD '${PASSWORD}';
 				GRANT access TO "$ID";
 				GRANT ALL ON DATABASE "$ID" TO access;
 				GRANT ALL ON SCHEMA public TO access;
 			EOF
-			/usr/local/bin/psql "$ID" pgsql -F\  -Atc '\d' | while read schema table dummy; do echo "GRANT ALL ON TABLE \"$schema\".\"$table\" TO access;"; done
+			/usr/local/bin/psql "$ID" ${PGROOTUSER} -F\  -Atc '\d' | while read schema table dummy; do echo "GRANT ALL ON TABLE \"$schema\".\"$table\" TO access;"; done
 			echo 'COMMIT;'
-		} | /usr/local/bin/psql "$ID" pgsql -q
+		} | /usr/local/bin/psql "$ID" ${PGROOTUSER} -q
 		out.info "'$ID' db user created!"
 	done
 }
@@ -592,19 +590,19 @@ domainrebuilder() {
 				if [ "${KEY}" = user ] && [ "${VALUE}" != "${ID}" -o "`echo ${OPTIONS} | fgrep -w force`" ]; then
 					VALUE=${ID}
 					PASSWORD=$(echo "$ID.$HOST" | md5)
-					if [ -z "$(/usr/local/bin/psql -tAc "\\du \"$ID\"" postgres pgsql)" ]; then echo "CREATE USER \"$ID\";"; fi | /usr/local/bin/psql postgres pgsql -q
+					if [ -z "$(/usr/local/bin/psql -tAc "\\du \"$ID\"" postgres ${PGROOTUSER})" ]; then echo "CREATE USER \"$ID\";"; fi | /usr/local/bin/psql postgres ${PGROOTUSER} -q
 					{
 						echo 'BEGIN;'
-						[ -z "$(/usr/local/bin/psql -tAc "\\du access" "$ID" pgsql)" ] && echo "CREATE GROUP access;"
+						[ -z "$(/usr/local/bin/psql -tAc "\\du access" "$ID" ${PGROOTUSER})" ] && echo "CREATE GROUP access;"
 						cat <<-EOF
 							ALTER USER "$ID" ENCRYPTED PASSWORD '$PASSWORD';
 							GRANT access TO "$ID";
 							GRANT ALL ON DATABASE "$ID" TO access;
 							GRANT ALL ON SCHEMA public TO access;
 						EOF
-						/usr/local/bin/psql "$ID" pgsql -F\  -Atc '\d' | while read -r schema table dummy; do echo "GRANT ALL ON TABLE \"$schema\".\"$table\" TO access;"; done
+						/usr/local/bin/psql "$ID" ${PGROOTUSER} -F\  -Atc '\d' | while read -r schema table dummy; do echo "GRANT ALL ON TABLE \"$schema\".\"$table\" TO access;"; done
 						echo 'COMMIT;'
-					} | /usr/local/bin/psql "$ID" pgsql -q
+					} | /usr/local/bin/psql "$ID" ${PGROOTUSER} -q
 					out.info "Value of '${KEY}' key for '${ID}' in '${GROUPNAME}' group has changed!"
 				fi
 				if [ "${PASSWORD}" -a "${KEY}" = "password" ]; then
@@ -692,9 +690,9 @@ domainadd() {
 			;;
 		esac
 		PASSWORD=$(dd "if=/dev/random" count=1 bs=8 | md5)
-		/usr/local/bin/psql -tA -c "CREATE USER \"${ID}\" WITH PASSWORD '${PASSWORD}'" postgres pgsql
-		/usr/local/bin/psql -tA -c "ALTER USER \"${ID}\" WITH PASSWORD '${PASSWORD}'" postgres pgsql
-		/usr/local/bin/psql -tA -c "GRANT ALL ON DATABASE \"${ID}\" TO \"${ID}\"" postgres pgsql
+		/usr/local/bin/psql -tA -c "CREATE USER \"${ID}\" WITH PASSWORD '${PASSWORD}'" postgres ${PGROOTUSER}
+		/usr/local/bin/psql -tA -c "ALTER USER \"${ID}\" WITH PASSWORD '${PASSWORD}'" postgres ${PGROOTUSER}
+		/usr/local/bin/psql -tA -c "GRANT ALL ON DATABASE \"${ID}\" TO \"${ID}\"" postgres ${PGROOTUSER}
 		printf " user='${ID}'" >> ${SERVERSCONF}
 		printf " password='${PASSWORD}'" >> ${SERVERSCONF}
 		printf "${STOP}" >> ${SERVERSCONF}
@@ -864,10 +862,12 @@ ACMCM5PATH=$ACMBSDPATH/acm.cm5
 GEOSHAREDPATH=$ACMBSDPATH/geo
 DBTEMPLATEFILE=$ACMBSDPATH/scripts/db-template/acmbsd.backup
 WATCHDOGFLAG=$LOCKDIRPATH/watchdog.pid
-PGDATAPATH=/usr/local/pgsql/data
 ACMBSDCOMPFILE=/tmp/acmbsd.cli.completion.list
 PORTSUPDLOGFILE=/tmp/acmbsd.updports.log
 OSUPDLOGFILE=/tmp/acmbsd.updbsd.log
+
+PGROOTUSER=postgres
+PGDATAPATH=/var/db/postgres/data11
 
 load.isLoaded() {
 	eval echo \$MODULE_$1
@@ -1577,8 +1577,8 @@ case $COMMAND in
 		fi
 
 		base.file.checkLine /etc/rc.conf postgresql_enable=\"YES\"
-		out.message "Check for '/usr/local/pgsql/data" waitstatus
-		if [ -d /usr/local/pgsql/data ]; then
+		out.message "Check for '${PGDATAPATH}'" waitstatus
+		if [ -d ${PGDATAPATH} ]; then
 			out.status green FOUND
 		else
 			out.status yellow "NOT FOUND"
@@ -1738,7 +1738,7 @@ case $COMMAND in
 		if ! echo $OPTIONS | fgrep -q nodb; then
 			echo -n Dumping database...
 			#TODO: check if db exist
-			if /usr/local/bin/pg_dump -f $BACKUPTMPPATH/db.backup -O -Z 4 -Fc -U pgsql $DOMAIN; then
+			if /usr/local/bin/pg_dump -f $BACKUPTMPPATH/db.backup -O -Z 4 -Fc -U ${PGROOTUSER} $DOMAIN; then
 				out.status green DONE
 			else
 				out.status red FAILED
@@ -1869,8 +1869,8 @@ case $COMMAND in
 					Group.getData live
 					dbuserscheck $DOMAIN
 					out.message 'Restore database...'
-					tar xf $BACKUPFILE -O --totals db.backup | /usr/local/bin/pg_restore -d $DOMAIN -Oc -U pgsql
-#pg_restore -d $DOMAIN -Ovc -U pgsql $BACKUPTMPPATH/db.backup
+					tar xf $BACKUPFILE -O --totals db.backup | /usr/local/bin/pg_restore -d $DOMAIN -Oc -U ${PGROOTUSER}
+					#pg_restore -d $DOMAIN -Ovc -U ${PGROOTUSER} $BACKUPTMPPATH/db.backup
 					Database.counters.correct $DOMAIN
 					if [ "$ID" ]; then
 						for GROUPNAME in $DISABLEPROCESSED; do
@@ -2262,10 +2262,10 @@ case $COMMAND in
 	;;
 	#COMMAND:DEVEL
 	vacuum)
-		DBLIST="`/usr/local/bin/psql -tA -F' ' -U pgsql template1 -c 'SELECT datname FROM pg_database WHERE datistemplate = false;'`"
+		DBLIST="`/usr/local/bin/psql -tA -F' ' -U ${PGROOTUSER} template1 -c 'SELECT datname FROM pg_database WHERE datistemplate = false;'`"
 		for ITEM in $DBLIST; do
 			echo "$ITEM..."
-			echo 'VACUUM ANALYSE;' | /usr/local/bin/psql -U pgsql "$ITEM"
+			echo 'VACUUM ANALYSE;' | /usr/local/bin/psql -U ${PGROOTUSER} "$ITEM"
 		done
 	;;
 	#COMMAND:DEVEL

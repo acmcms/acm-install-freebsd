@@ -47,7 +47,7 @@ Report.domains() {
 		fi
 		Print.owners() {
 			SQL="SELECT login, email FROM umUserAccounts JOIN umUserGroups USING(userId) WHERE groupId='def.supervisor'"
-			/usr/local/bin/psql -tA -F' ' -c "$SQL" $DOMAIN pgsql | while read DOMAINLOGIN DOMAINEMAIL; do
+			/usr/local/bin/psql -tA -F' ' -c "${SQL}" ${DOMAIN} ${PGROOTUSER} | while read DOMAINLOGIN DOMAINEMAIL; do
 				DOMAINEMAIL=`echo $DOMAINEMAIL | egrep '([[:alnum:]_.]+@[[:alnum:]_]+?\.[[:alpha:].]{2,6})' || printf -`
 				printf "$DOMAINLOGIN ($DOMAINEMAIL)|"
 			done
