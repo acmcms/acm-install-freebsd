@@ -14,7 +14,7 @@ echo 'ACM BSD Installer started...'
 #
 # Check user
 #
-test `id -u` != 0 && echo 'ERROR: Must be root!' && exit 1
+test `id -u` != 0 && echo 'ERROR: Must be root!' >&2 && exit 1
 
 ######################################
 if [ -d "/usr/local/myx.distro/local-deploy-cache" ] ; then
@@ -59,7 +59,9 @@ myx.common lib/fetchStdout https://github.com/acmcms/acm-install-freebsd/archive
 
 ######################################
 
-echo "Not yet! BETA BETA BETA"
-
 bash /usr/local/acmbsd/scripts/acmbsd.sh preparebsd
 bash /usr/local/acmbsd/scripts/acmbsd.sh install -noupdate
+
+
+echo "The 'acmbsd' script installed and seems to be ready.\nType 'acmbsd' in command prompt."  >&2
+
