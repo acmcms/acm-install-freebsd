@@ -5,7 +5,7 @@ ACMBSD automation script for ACMCMS on FreeBSD OS
 First you need to install FreeBSD
 Do next sections after you get terminal access
 
-1.1 Get script
+1.1. Get script
 
 *Method 0. Oneliner
 ```
@@ -24,26 +24,26 @@ pkg install -y git
 git clone git://github.com/vlapan/acmbsd.git
 ```
 
-1.2 Prepare system
+1.2. Prepare system
 ```
 cd acmbsd
 chmod +x acmbsd.sh
 ./acmbsd.sh preparebsd 	# install ports and configure system
 reboot
 ```
-1.3 Install script
+1.3. Install script
 ```
 cd acmbsd
 ./acmbsd.sh install
 ```
 
-1.4 Add new group of instances
+1.4. Add new group of instances
 ```
 acmbsd add live
 acmbsd update live
 ```
 
-1.5 Configure system and group
+1.5. Configure system and group
 
 To see config command syntax and available group list execute this command:
 `acmbsd config`
@@ -60,10 +60,10 @@ Change available memory:
 Check other group settings:
 `acmbsd config live`
 
-1.6 Start group of instances
+1.6. Start group of instances
 `acmbsd start live`
 
-1.7 Adding new host to cluster
+1.7. Adding new host to cluster
 ```
 acmbsd cluster activate
 acmbsd cluster addto -host=user@cluster.example.org
