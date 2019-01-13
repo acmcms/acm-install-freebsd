@@ -214,7 +214,7 @@ scriptlink() {
 	[ -e "$2" ] || return 1
 	out.message "Link '$2' to '$1'..." waitstatus
 	#TODO: check exit code
-	ln -f $2 $1
+	ln -sf $2 $1
 	out.status green DONE
 	out.message "Change rights for '$1'..." waitstatus
 	chown acmbsd:acmbsd $1 && chmod 0774 $1
