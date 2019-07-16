@@ -790,7 +790,7 @@ SCRIPTNAME=acmbsd
 GROUPSNAME='devel test live temp'
 RUNSTR="$0 $@"
 COMMAND=$1
-VERSION=160
+VERSION=$(cat version || echo 0)
 
 System.checkPermisson || { System.runAsUser root "$RUNSTR"; exit 1; }
 
