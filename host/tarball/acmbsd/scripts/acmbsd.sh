@@ -1735,7 +1735,7 @@ case $COMMAND in
 			BACKUPS=`ls -U $BACKUPDIRPATH | grep $DOMAIN`
 			COUNT=`echo $BACKUPS | wc -w`
 			if [ $COUNT -gt $BACKUPLIMIT ]; then
-				echo -n Removeing old backups...
+				echo -n Removing old backups...
 				for ITEM in $BACKUPS; do
 					rm -f $BACKUPDIRPATH/$ITEM
 					COUNT=$((COUNT - 1))
