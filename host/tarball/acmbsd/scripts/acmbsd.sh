@@ -790,7 +790,6 @@ SCRIPTNAME=acmbsd
 GROUPSNAME='devel test live temp'
 RUNSTR="$0 $@"
 COMMAND=$1
-VERSION=$(cat version || echo 0)
 
 System.checkPermisson || { System.runAsUser root "$RUNSTR"; exit 1; }
 
@@ -812,6 +811,8 @@ WATCHDOGFLAG=$LOCKDIRPATH/watchdog.pid
 ACMBSDCOMPFILE=/tmp/acmbsd.cli.completion.list
 PORTSUPDLOGFILE=/tmp/acmbsd.updports.log
 OSUPDLOGFILE=/tmp/acmbsd.updbsd.log
+
+VERSION=$(cat "${ACMBSDPATH}/scripts/version" || echo 0)
 
 PGROOTUSER=postgres
 PGDATAPATH=/var/db/postgres/data11
