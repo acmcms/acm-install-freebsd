@@ -242,11 +242,14 @@ System.changeRights() {
 	out.status green DONE && return 0
 }
 Network.git.fetch() {
-	if [ ! -d ${2} ]; then
-		git clone ${1} ${2} || return 1
-	elif [ -d ${2}/.git ]; then
+	if [ -d ${2}/.git ]; then
 		cd ${2}
 		git pull || return 1
+	else
+		if [ -d ${2} ]; then
+			rm -rdf "${ACMCM5PATH}/${2}" || return 1
+		fi
+		git clone ${1} ${2} || return 1
 	fi
 }
 cvsacmcm() {
