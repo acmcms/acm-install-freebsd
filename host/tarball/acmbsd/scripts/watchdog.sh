@@ -2,7 +2,8 @@
 
 Watchdog.start(){
 	out.message "Starting watchdog process..." waitstatus
-	/usr/sbin/daemon -p $WATCHDOGFLAG $0 watchdog > $ACMBSDPATH/watchdog.log 2>&1
+	echo '' > $ACMBSDPATH/watchdog.log
+	/usr/sbin/daemon -f -r -o $ACMBSDPATH/watchdog.log -P $WATCHDOGFLAG -- $0 watchdog
 	out.status green DONE
 }
 
@@ -31,11 +32,7 @@ Watchdog.restart() {
 		else
 			out.status green FOUND
 			out.message 'Killing watchdog process...' waitstatus
-			kill `cat $WATCHDOGFLAG`
-			if [ -e "$WATCHDOGFLAG" ]; then
-				rm $WATCHDOGFLAG
-			fi
-			out.status green DONE
+			killbylockfile $WATCHDOGFLAG
 			Watchdog.start
 		fi
 	else
