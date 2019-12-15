@@ -164,7 +164,7 @@ Named.check() {
 		ZONEDIFF=''
 		[ -f $CKFILE ] || touch $CKFILE
 		ls -lT $GROUPZONEDIR > $CKFILE.tmp
-		ZONEDIFF=`diff -a --changed-group-format='%>' --unchanged-group-format='' $CKFILE $CKFILE.tmp | tr ' ' '\n' | fgrep .dns`
+		ZONEDIFF=`gdiff -a --changed-group-format='%>' --unchanged-group-format='' $CKFILE $CKFILE.tmp | tr ' ' '\n' | fgrep .dns`
 		mv $CKFILE.tmp $CKFILE
 		echo "ZONEDIFF:$ZONEDIFF:"
 		Named.reload "$ZONEDIFF"

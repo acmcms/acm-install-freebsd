@@ -33,7 +33,7 @@ myx.common setup/server --postfix-mta
 myx.common lib/replaceLine /etc/ssh/sshd_config '^ClientAliveInterval *' 'ClientAliveInterval 60'
 myx.common lib/replaceLine /etc/ssh/sshd_config '^ClientAliveCountMax *' 'ClientAliveCountMax 10'
 
-pkg install -y sudo bash nano screen curl postfix metamail rsync rlwrap elinks xtail xmlstarlet ncdu tinc mtr-nox11 p5-ack smartmontools ipcalc trafshow host-setup sysrc openjdk8 bind911
+pkg install -y sudo bash nano screen curl postfix metamail rsync rlwrap elinks xtail xmlstarlet ncdu tinc mtr-nox11 p5-ack smartmontools ipcalc trafshow host-setup sysrc openjdk8 bind911 diffutils
 
 
 # ACMBSDPATH=/usr/local/acmbsd
