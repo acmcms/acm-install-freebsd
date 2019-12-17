@@ -1065,12 +1065,12 @@ case $COMMAND in
 			geo)
 				Command.depend.activeGroup
 				System.fs.dir.create $GEOSHAREDPATH
-				fetch -v -a -m -o $GEOSHAREDPATH ftp://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-latest
-				fetch -v -a -m -o $GEOSHAREDPATH ftp://ftp.apnic.net/pub/stats/apnic/delegated-apnic-latest
-				fetch -v -a -m -o $GEOSHAREDPATH/delegated-arin-latest ftp://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest
-				fetch -v -a -m -o $GEOSHAREDPATH ftp://ftp.apnic.net/pub/stats/iana/delegated-iana-latest
-				fetch -v -a -m -o $GEOSHAREDPATH ftp://ftp.lacnic.net/pub/stats/lacnic/delegated-lacnic-latest
-				fetch -v -a -m -o $GEOSHAREDPATH ftp://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
+				fetch -v -a -m -o $GEOSHAREDPATH https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-latest
+				fetch -v -a -m -o $GEOSHAREDPATH https://ftp.apnic.net/pub/stats/apnic/delegated-apnic-latest
+				fetch -v -a -m -o $GEOSHAREDPATH/delegated-arin-latest https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest
+				fetch -v -a -m -o $GEOSHAREDPATH https://ftp.apnic.net/pub/stats/iana/delegated-iana-latest
+				fetch -v -a -m -o $GEOSHAREDPATH https://ftp.lacnic.net/pub/stats/lacnic/delegated-lacnic-latest
+				fetch -v -a -m -o $GEOSHAREDPATH https://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
 
 				for GROUPNAME in $ACTIVATEDGROUPS; do
 					Group.create $GROUPNAME
