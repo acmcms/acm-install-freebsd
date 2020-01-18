@@ -1,18 +1,17 @@
 #!/bin/sh -e
 
 Report.domains() {
-	printf "<p>"
-	printf "<b>DOMAINS:</b><br/>\n"
-	printf "<table cellspacing=\"1\" cellpadding=\"3\" border=\"1\">\n"
-	for GROUPNAME in ${GROUPS}; do
-		HTMLGROUPS="${HTMLGROUPS}<th>${GROUPNAME}</th>"
-	done
-	printf "<tr><th>DOMAIN</th>${HTMLGROUPS}<th>DBSIZE</th><th>DBCONN</th><th>OWNERS</th></tr>\n"
-	DOMAINS=""
+	GROUPSLIST=""
+	DOMAINLIST=""
 	for GROUPNAME in ${GROUPS}; do
 		Group.getData ${GROUPNAME}
 		if [ ! -d ${WEB} ]; then
 			continue
+		fi
+		if [ -z "${GROUPSLIST}" ]; then
+			GROUPSLIST="${GROUPNAME}"
+		else
+			GROUPSLIST="${GROUPSLIST} ${GROUPNAME}"
 		fi
 		if [ -z "${WEBS}" ]; then
 			WEBS="${WEB}"
@@ -32,6 +31,13 @@ Report.domains() {
 		done
 	done
 	DUDATA=$(nice -n 30 du -ch -d 1 ${WEBS})
+	printf "<p>"
+	printf "<b>DOMAINS:</b><br/>\n"
+	printf "<table cellspacing=\"1\" cellpadding=\"3\" border=\"1\">\n"
+	for GROUPNAME in ${GROUPSLIST}; do
+		HTMLGROUPS="${HTMLGROUPS}<th>${GROUPNAME}</th>"
+	done
+	printf "<tr><th>DOMAIN</th>${HTMLGROUPS}<th>DBSIZE</th><th>DBCONN</th><th>OWNERS</th></tr>\n"
 	for DOMAIN in ${DOMAINLIST}; do
 		printf "<tr><td>${DOMAIN}</td>"
 		for WEB in ${WEBS}; do
