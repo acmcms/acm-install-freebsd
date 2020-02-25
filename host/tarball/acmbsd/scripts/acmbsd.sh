@@ -1585,7 +1585,7 @@ case $COMMAND in
 		mail.check
 
 		pgsql.check
-		csync.check
+		# csync.check
 
 		out.info "Fresh system? Reboot your OS!"
 		echo
