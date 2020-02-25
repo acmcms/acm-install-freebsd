@@ -62,7 +62,7 @@ myx.common lib/fetchStdout https://github.com/acmcms/acm-install-freebsd/archive
 
 myx.common lib/replaceLine /boot/loader.conf '^ipfw_load=*' 'ipfw_load="yes"'
 myx.common lib/replaceLine /boot/loader.conf '^ipfw_nat_load=*' 'ipfw_nat_load="yes"'
-
+touch /usr/local/etc/acmbsd-instance-list
 cat > /usr/local/etc/ipfw.sh <<- 'EOF'
 	#!/bin/sh
 	
