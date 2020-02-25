@@ -91,14 +91,14 @@ cat > /usr/local/etc/ipfw.sh <<- 'EOF'
 EOF
 chmod 755 /usr/local/etc/ipfw.sh
 
-rm -f nohup.out || true
-nohup -- sh -c 'kldload ipfw_nat || true; service ipfw start || /usr/local/etc/ipfw.sh || true'
-cat nohup.out
-
 
 sysrc firewall_enable=YES
 sysrc firewall_script=/usr/local/etc/ipfw.sh
 sysrc firewall_type=OPEN
+
+rm -f nohup.out || true
+nohup -- sh -c 'kldload ipfw_nat || true; service ipfw start || /usr/local/etc/ipfw.sh || true'
+cat nohup.out
 
 
 bash /usr/local/acmbsd/scripts/acmbsd.sh preparebsd
