@@ -65,12 +65,12 @@ myx.common lib/replaceLine /boot/loader.conf '^ipfw_nat_load=*' 'ipfw_nat_load="
 touch /usr/local/etc/acmbsd-instance-list
 cat > /usr/local/etc/ipfw.sh <<- 'EOF'
 	#!/bin/sh
-	
+
 	# 
-	
+
 	/sbin/ipfw delete 375
 	/sbin/ipfw add 375 allow tcp from any to me dst-port 22 in
-	
+
 	/sbin/ipfw delete 475
 	/sbin/ipfw add 475 allow ip from me to any
 
@@ -82,10 +82,10 @@ cat > /usr/local/etc/ipfw.sh <<- 'EOF'
 		/sbin/ipfw add 575 fwd $line,14081 tcp from 172.16.0.0/16 to me dst-port 81 in
 		/sbin/ipfw add 575 fwd $line,14081 tcp from 192.168.0.0/16 to me dst-port 81 in
 	done
-	
+
 	/sbin/ipfw delete 675
 	/sbin/ipfw add 675 allow ip from any to me dst-port 53 in 
-	
+
 	/sbin/ipfw delete 10975
 	/sbin/ipfw add 10975 allow ip from any to me
 EOF

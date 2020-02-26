@@ -1813,9 +1813,9 @@ case $COMMAND in
 						done
 					fi
 					Group.getData live
-					dbuserscheck $DOMAIN
 					out.message 'Creating "pgsql" user...'
-					sudo -u postgres psql -c 'CREATE ROLE pgsql WITH SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;' || true
+					sudo -i -u postgres psql -c 'CREATE ROLE pgsql WITH SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;' || true
+					dbuserscheck $DOMAIN
 					out.message 'Restore database...'
 					tar xf $BACKUPFILE -O --totals db.backup | /usr/local/bin/pg_restore -d $DOMAIN -Oc -U ${PGROOTUSER}
 					#pg_restore -d $DOMAIN -Ovc -U ${PGROOTUSER} $BACKUPTMPPATH/db.backup
