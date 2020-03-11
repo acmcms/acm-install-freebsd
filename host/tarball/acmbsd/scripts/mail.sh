@@ -61,7 +61,7 @@ mail.sendfile() {
 
 mail.check() {
 	mail.aliases.refresh
-	myx.common lib/installPostfixMTA
+	myx.common os/installPostfixMTA
 }
 
 #out.message 'mail: module loaded'
