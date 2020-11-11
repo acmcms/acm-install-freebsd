@@ -145,6 +145,7 @@ Named.reload() {
 	chown -R bind:wheel /usr/local/etc/namedb/slave && chmod -R 0755 /usr/local/etc/namedb/slave
 	chown -R bind:wheel /usr/local/etc/namedb/dynamic && chmod -R 0755 /usr/local/etc/namedb/dynamic
 	chown -R bind:wheel /usr/local/etc/namedb/working && chmod -R 0755 /usr/local/etc/namedb/working
+	chown bind:wheel /usr/local/etc/namedb
 	printf "$NAMEDCONF" >> $NAMEDCONFFILE
 	echo
 	if ! /usr/local/etc/rc.d/named reload; then
