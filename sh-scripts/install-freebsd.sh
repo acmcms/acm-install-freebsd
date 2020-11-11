@@ -1,5 +1,6 @@
 #!/bin/sh -e
 
+##
 # There are two ways:
 #
 # 1) fetch https://raw.githubusercontent.com/acmcms/acm-install-freebsd/master/sh-scripts/install-freebsd.sh -o - | sh -e
@@ -7,13 +8,11 @@
 # 2) To execute this as a script, run:
 #		sh -c 'eval "`cat`"'
 # on the target machine under the 'root' user, paste whole text from this file, then press CTRL+D.
-#
+##
 
 echo 'ACM BSD Installer started...'
 
-#
 # Check user
-#
 test `id -u` != 0 && echo 'ERROR: Must be root!' >&2 && exit 1
 
 ######################################
@@ -29,11 +28,19 @@ sysrc ntpdate_flags="-b pool.ntp.org europe.pool.ntp.org time.euro.apple.com"
 
 myx.common setup/server --postfix-mta
 
-## Keeps SSH connection
+# Change ssh port
+myx.common lib/replaceLine /etc/ssh/sshd_config "^Port *" "Port 29"
+# Keeps SSH connection
 myx.common lib/replaceLine /etc/ssh/sshd_config '^ClientAliveInterval *' 'ClientAliveInterval 60'
 myx.common lib/replaceLine /etc/ssh/sshd_config '^ClientAliveCountMax *' 'ClientAliveCountMax 10'
+service sshd restart
 
-pkg install -y sudo bash nano screen curl postfix metamail rsync rlwrap elinks xtail xmlstarlet ncdu tinc mtr-nox11 p5-ack smartmontools ipcalc trafshow host-setup sysrc openjdk13 bind911 diffutils
+pkg install -y \
+	sudo bash nano screen curl rsync ncdu \
+	postfix metamail rlwrap elinks \
+	xtail mtr-nox11 p5-ack \
+	smartmontools diffutils \
+	tinc openjdk13 bind916
 
 
 # ACMBSDPATH=/usr/local/acmbsd
