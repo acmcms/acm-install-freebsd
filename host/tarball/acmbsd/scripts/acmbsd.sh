@@ -77,7 +77,7 @@ Java.classpath.stats(){
 #TODO: H2
 Database.h2.backupAll() {
 	out.nextrelease
-	for ITEM in `ls $DBDIR | cut -d. -f1-2 | uniq`; do
+	for ITEM in ` ls $DBDIR | cut -d. -f1-2 | sort -u `; do
 		Database.h2.backup $ITEM
 	done
 }
