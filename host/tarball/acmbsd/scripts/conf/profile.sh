@@ -8,7 +8,8 @@ export GREP_COLOR='00;38;5;157'
 export INPUTRC=/etc/inputrc
 #[ "\${BASH-no}" != no -a -r /usr/local/etc/bashprofile ] && . /usr/local/etc/bashprofile
 [ -x /usr/local/bin/screen ] && [ "\$TERM" != screen ] && (
-	export PS1='\[\e[0;32m\]\u@\h\[\e[m\]:\[\e[0;34m\]\w\[\e[m\]\[\e[0;32m\]\$\[\e[m\] \[\e[0m\]'
+	printf "\033]0;$(hostname)\a" >&2
+	export PS1='\[\e]0;\u@\h: \w\a\]\[\e[0;32m\]\u@\h\[\e[m\]:\[\e[0;34m\]\w\[\e[m\]\[\e[0;32m\]\$\[\e[m\] \[\e[0m\]'
 	export HISTSIZE=5000
 	export HISTFILESIZE=20000
 	export HISTCONTROL=erasedups
