@@ -167,7 +167,7 @@ Group.isEA() {
 }
 
 Group.isMemory() {
-	echo $1 | fgrep -qoE "\b([0-9]*?)m\b" && return 0 || return 1
+	echo $1 | fgrep -qoE "\b([0-9]+)m\b" && return 0 || return 1
 }
 
 Group.isExist() {
