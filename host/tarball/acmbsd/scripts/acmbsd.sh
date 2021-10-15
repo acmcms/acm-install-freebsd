@@ -815,7 +815,7 @@ OSUPDLOGFILE=/tmp/acmbsd.updbsd.log
 VERSION=$(cat "${ACMBSDPATH}/scripts/version" || echo 0)
 
 PGROOTUSER=postgres
-PGDATAPATH=/var/db/postgres/data11
+PGDATAPATH=/var/db/postgres/data14
 
 load.isLoaded() {
 	eval echo \$MODULE_$1
@@ -1175,8 +1175,6 @@ case $COMMAND in
 			full)
 				Report.system | elinks -dump-width 200 -dump
 				echo
-				Report.ipnat | elinks -dump-width 200 -dump
-				echo
 				Report.domains | elinks -dump-width 200 -dump
 				echo
 				Report.daemons | elinks -dump-width 200 -dump
@@ -1189,9 +1187,6 @@ case $COMMAND in
 			;;
 			system)
 				Report.system | elinks -dump-width 200 -dump
-			;;
-			ipnat)
-				Report.ipnat | elinks -dump-width 200 -dump
 			;;
 			domains)
 				Report.domains | elinks -dump-width 200 -dump

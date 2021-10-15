@@ -104,53 +104,6 @@ Report.daemons(){
 		</p>
 	EOF
 }
-Report.ipnat() {
-	local IPNATDATA=$(/sbin/ipnat -l | fgrep -w RDR)
-	local IPNATCONN=$(echo "${IPNATDATA}" | grep RDR | wc -l | tr -d ' ')
-	local RESULT=""
-	Report.ipnat.printRow() {
-		cat <<-EOF
-			<tr>
-				<td>
-					$1
-				</td>
-				<td>
-					$2
-				</td>
-				<td>
-					$3
-				</td>
-			</tr>
-		EOF
-	}
-	for GROUPNAME in ${GROUPS}; do
-		EXTIP=$(cfg.getValue ${GROUPNAME}-extip)
-		for IP in ${EXTIP}; do
-			COUNT=$(echo "${IPNATDATA}" | fgrep -w ${IP} | wc -l | tr -d " ")
-			ROW=`Report.ipnat.printRow ${IP} ${GROUPNAME} ${COUNT}`
-			RESULT="$RESULT $ROW"
-		done
-	done
-
-	cat <<-EOF
-		<div>
-			<b>IPNAT:</b>
-			<table cellspacing="0" cellpadding="0" border="1">
-				<tr>
-					<th>External IP</th>
-					<th>Group</th>
-					<th>IPNAT redirects</th>
-				</tr>
-				$RESULT
-				<tr>
-					<td>*</td>
-					<td>*</td>
-					<td>${IPNATCONN}</td>
-				</tr>
-			</table>
-		</div>
-	EOF
-}
 
 Report.system() {
 	OSUPTIME=$(/usr/bin/uptime | cut -d',' -f1 | sed 's/  / /g' | tr ' ' ',' | cut -d',' -f4-5 | tr ',' ' ')
@@ -159,7 +112,7 @@ Report.system() {
 	POSTGRESQLVERSION=$(/usr/sbin/pkg info | grep postgresql-server | cut -d'-' -f3 | cut -d' ' -f1)
 
 	Print.branchVersions() {
-		for ITEM in `ls $ACMCM5PATH/$BRANCH`; do
+		for ITEM in `ls $ACMCM5PATH`; do
 			VERSIONFILE=$ACMCM5PATH/$ITEM/version/version
 			VERSIONDATE=`getfiledate ${VERSIONFILE}`
 			cat <<-EOF
@@ -375,7 +328,6 @@ Report.getFullReport() {
 	cat <<-EOF
 		<html>
 			`Report.system`
-			`Report.ipnat`
 			`Report.domains`
 			`Report.daemons`
 			`Report.connections`
