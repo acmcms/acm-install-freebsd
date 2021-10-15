@@ -54,7 +54,7 @@ Report.domains() {
 		Print.owners() {
 			SQL="SELECT login, email FROM umUserAccounts JOIN umUserGroups USING(userId) WHERE groupId='def.supervisor'"
 			/usr/local/bin/psql -tA -F' ' -c "${SQL}" ${DOMAIN} ${PGROOTUSER} | while read DOMAINLOGIN DOMAINEMAIL; do
-				DOMAINEMAIL=`echo $DOMAINEMAIL | egrep '([[:alnum:]_.]+@[[:alnum:]_]+?\.[[:alpha:].]{2,6})' || printf -`
+				DOMAINEMAIL=`echo $DOMAINEMAIL | grep -E '([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z.]{2,8})' || printf -`
 				printf "$DOMAINLOGIN ($DOMAINEMAIL)|"
 			done
 		}
@@ -114,12 +114,14 @@ Report.system() {
 	Print.branchVersions() {
 		for ITEM in `ls $ACMCM5PATH`; do
 			VERSIONFILE=$ACMCM5PATH/$ITEM/version/version
-			VERSIONDATE=`getfiledate ${VERSIONFILE}`
-			cat <<-EOF
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				$ITEM: <b>`cat ${VERSIONFILE}`</b> (${VERSIONDATE})
-				<br />
-			EOF
+			if [ -f ${VERSIONFILE} ]; then
+				VERSIONDATE=`getfiledate ${VERSIONFILE}`
+				cat <<-EOF
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					$ITEM: <b>`cat ${VERSIONFILE}`</b> (${VERSIONDATE})
+					<br />
+				EOF
+			fi
 		done
 	}
 	cat <<-EOF
