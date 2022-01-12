@@ -34,6 +34,16 @@ myx.common lib/replaceLine /etc/ssh/sshd_config "^Port *" "Port 29"
 myx.common lib/replaceLine /etc/ssh/sshd_config '^ClientAliveInterval *' 'ClientAliveInterval 60'
 myx.common lib/replaceLine /etc/ssh/sshd_config '^ClientAliveCountMax *' 'ClientAliveCountMax 10'
 service sshd restart
+# mac_portacl
+sysrc -f /boot/loader.conf mac_portacl_load="YES"
+kldload -n mac_portacl
+myx.common lib/replaceLine /etc/sysctl.conf 'net.inet.ip.portrange.reservedlow' 'net.inet.ip.portrange.reservedlow=0'
+myx.common lib/replaceLine /etc/sysctl.conf 'net.inet.ip.portrange.reservedhigh' 'net.inet.ip.portrange.reservedhigh=0'
+myx.common lib/replaceLine /etc/sysctl.conf 'security.mac.portacl.port_high' 'security.mac.portacl.port_high=1023'
+myx.common lib/replaceLine /etc/sysctl.conf 'security.mac.portacl.suser_exempt' 'security.mac.portacl.suser_exempt=1'
+myx.common lib/replaceLine /etc/sysctl.conf 'security.mac.portacl.rules' 'security.mac.portacl.rules=uid:53:tcp:53,uid:53:udp:53,uid:53:tcp:953,uid:53:udp:953'
+service sysctl restart
+
 
 pkg install -y \
 	sudo bash nano screen curl rsync ncdu \
