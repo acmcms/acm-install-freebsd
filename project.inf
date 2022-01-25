@@ -1,6 +1,7 @@
 Name: acm-install-freebsd
 Info: acmbsd utility installer
-Provides: acm/acm-install-freebsd \
+Provides: \
+	acm/acm-install-freebsd \
 	source-prepare:increment:build.number \
 	source-process:project-source.tgz \
 	deploy-export:project-source.tgz:github.com/acmcms/acm-install-freebsd/archive/master.tar.gz \
