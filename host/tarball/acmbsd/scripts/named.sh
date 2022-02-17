@@ -122,11 +122,8 @@ Named.reload() {
 	fi
 	local NAMEDCONF=""
 	if ! fgrep -qw mainoptions $NAMEDCONFFILE; then
-		#EXTIPS=`cfg.getValue extip` && EXTIPS="`echo -n $EXTIPS | sed 's/,/;/'`;"
 		#TODO: transfers auto lookup
 		NAMEDTRANSFER=`cfg.getValue namedtransfer` && NAMEDTRANSFER="`echo $NAMEDTRANSFER | sed 's/,/;/g'`;" || NAMEDTRANSFER='"none";'
-		#TODO:echo '82.179.192.192;82.179.193.193'
-		#NAMEDCONF="options {directory \"/usr/local/etc/namedb\";version \"[Secured]\";pid-file \"/var/run/named/pid\";allow-transfer {$NAMEDTRANSFER};multi-master yes;dump-file \"/var/dump/named_dump.db\";statistics-file \"/var/stats/named.stats\";listen-on {any;};}; controls {inet 127.0.0.1 allow {localhost;};}; //acm generatedoptions\n"
 		NAMEDCONF="`Named.conf.options | tr -d '\n' | tr -d '\t'` //acm generatedoptions\n"
 	fi
 	rm -f $ZONEDIR/*

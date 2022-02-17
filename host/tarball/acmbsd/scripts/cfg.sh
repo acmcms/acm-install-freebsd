@@ -39,10 +39,14 @@ cfg.getValue() {
 }
 cfg.getValueByPattern() {
 	[ "${1}" ] || return 1
-	sysrc -f "${DATAFILE}" -q -n $(cfg.getKeyByPattern "${1}")
+	sysrc -f "${DATAFILE}" -q -n "$(cfg.getKeyByPattern "${1}")"
 }
 cfg.remove() {
 	[ "${1}" ] || return 1
 	sysrc -f "${DATAFILE}" -q -x "$(cfg.norm "${1}")" || return 1
+}
+cfg.removeByPattern() {
+	[ "${1}" ] || return 1
+	sysrc -f "${DATAFILE}" -q -x "$(cfg.getKeyByPattern "${1}")"
 }
 #out.message 'cfg: module loaded'

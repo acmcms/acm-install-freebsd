@@ -34,11 +34,11 @@ THIS.isExist() {
 	test -d $THIS_HOME && return 0 || return 1
 }
 THIS.setActive() {
-	[ "$1" = true ] && cfg.setValue ${THIS_GROUPNAME}-active-THIS true || cfg.remove active-THIS
+	[ "$1" = true ] && cfg.setValue ${THIS_GROUPNAME}-active-THIS true || cfg.remove ${THIS_GROUPNAME}-active-THIS
 }
 THIS.isActive() {
 	out.message "Check instance 'THIS' daemon..." waitstatus
-	if [ -z "`cfg.getValue active-THIS`" ]; then
+	if [ -z "`cfg.getValue ${THIS_GROUPNAME}-active-THIS`" ]; then
 		out.status yellow OFFLINE && return 1
 	else
 		PID=`THIS.getPID`
