@@ -1169,8 +1169,8 @@ case $COMMAND in
 				 	extended - 2 instances running, but traffic pass only to one, soft restart
 				 	parallel - 2 or more instances running, soft restart
 
-				Free groups: ${FREEGROUPS}
-				Free IP-addresses: ${FREEIPLIST}
+				Free groups: ${FREEGROUPS:-NO}
+				Free IP-addresses: ${FREEIPLIST:-NO}
 
 				Example: $SCRIPTNAME $COMMAND {groupname} -extip=192.168.1.1 [-branch=release] [-memory=512m] [-type=standard]
 			EOF

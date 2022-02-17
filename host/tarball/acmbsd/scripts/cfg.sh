@@ -24,6 +24,10 @@ cfg.norm() {
 cfg.reload() {
 	return 0
 }
+cfg.getKeyByPattern() {
+	[ "${1}" ] || return 1
+	sysrc -f "${DATAFILE}" -q -N -a | grep "$(cfg.norm "${1}")"
+}
 cfg.setValue() {
 	[ "${1}" ] || return 1
 	[ "${2}" ] || return 1
@@ -35,7 +39,7 @@ cfg.getValue() {
 }
 cfg.getValueByPattern() {
 	[ "${1}" ] || return 1
-	sysrc -f "${DATAFILE}" -q -n $(sysrc -f "${DATAFILE}" -q -N -a | grep "$(cfg.norm "${1}")")
+	sysrc -f "${DATAFILE}" -q -n $(cfg.getKeyByPattern "${1}")
 }
 cfg.remove() {
 	[ "${1}" ] || return 1
