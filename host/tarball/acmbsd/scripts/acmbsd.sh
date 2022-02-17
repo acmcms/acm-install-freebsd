@@ -135,7 +135,7 @@ Network.isIP() {
 	echo $1 | fgrep -v 127.0.0.1 | fgrep -qoE "\b$IPOCT\.$IPOCT\.$IPOCT\.$LASTIPOCT\b" && return 0 || return 1
 }
 Network.getIPList() {
-	/sbin/ifconfig | fgrep -w inet | cut -d' ' -f2 | grep -oE "\b$IPOCT\.$IPOCT\.$IPOCT\.$LASTIPOCT\b" | grep -v 127.0.0.1 | grep -v 172.16.0
+	/sbin/ifconfig -a -u -G lo inet | fgrep -w inet | cut -d' ' -f2 | grep -oE "\b$IPOCT\.$IPOCT\.$IPOCT\.$LASTIPOCT\b" | grep -v 127.0.0.1 | grep -v 172.16.0
 }
 Network.getFreeIPList() {
 	local BUSYIP="$(cfg.getValueByPattern extip)"
