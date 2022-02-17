@@ -68,7 +68,7 @@ THIS.getInstanceActive() {
 	# 	fi
 	# done
 	# echo
-	ACTIVATEDINSTANCES=$(cfg.getValueByPattern "THIS-active" | cut -d- -f3 | cut -d= -f1)
+	ACTIVATEDINSTANCES=$(cfg.getKeyByPattern "THIS-active" | cut -d_ -f3)
 	echo $ACTIVATEDINSTANCES
 }
 THIS.isSingleActive() {
