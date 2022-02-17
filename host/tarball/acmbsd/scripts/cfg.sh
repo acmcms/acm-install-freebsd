@@ -31,7 +31,7 @@ cfg.getKeyByPattern() {
 cfg.setValue() {
 	[ "${1}" ] || return 1
 	[ "${2}" ] || return 1
-	sysrc -f "${DATAFILE}" -q "$(cfg.norm "${1}")=${2}" || return 1
+	sysrc -f "${DATAFILE}" -q "$(cfg.norm "${1}")=${2}" > /dev/null || return 1
 }
 cfg.getValue() {
 	[ "${1}" ] || return 1
