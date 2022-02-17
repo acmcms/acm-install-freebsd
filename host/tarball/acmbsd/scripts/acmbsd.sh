@@ -138,10 +138,7 @@ Network.getIPList() {
 	/sbin/ifconfig | fgrep -w inet | cut -d' ' -f2 | grep -oE "\b$IPOCT\.$IPOCT\.$IPOCT\.$LASTIPOCT\b" | grep -v 127.0.0.1 | grep -v 172.16.0
 }
 Network.getFreeIPList() {
-	local BUSYIP
-	for GROUPNAME in ${ACTIVATEDGROUPS}; do
-		BUSYIP="${BUSYIP}$(cfg.getValue extip) "
-	done
+	local BUSYIP="$(cfg.getValueByPattern extip)"
 	local FIRST=true
 	for ITEM in $(Network.getIPList); do
 		if ! echo "$BUSYIP" | fgrep -qw $ITEM; then

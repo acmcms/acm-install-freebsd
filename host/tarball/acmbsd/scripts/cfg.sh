@@ -33,9 +33,12 @@ cfg.getValue() {
 	[ "${1}" ] || return 1
 	sysrc -f "${DATAFILE}" -q -n "$(cfg.norm "${1}")" || return 1
 }
+cfg.getValueByPattern() {
+	[ "${1}" ] || return 1
+	sysrc -f "${DATAFILE}" -q -n $(sysrc -f "${DATAFILE}" -q -N -a | grep "$(cfg.norm "${1}")")
+}
 cfg.remove() {
 	[ "${1}" ] || return 1
 	sysrc -f "${DATAFILE}" -q -x "$(cfg.norm "${1}")" || return 1
 }
-
 #out.message 'cfg: module loaded'

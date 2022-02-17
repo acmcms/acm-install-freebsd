@@ -68,7 +68,7 @@ THIS.getInstanceActive() {
 	# 	fi
 	# done
 	# echo
-	ACTIVATEDINSTANCES=`echo "$DATA" | grep -w "THIS-active" | cut -d- -f3 | cut -d= -f1`
+	ACTIVATEDINSTANCES=$(cfg.getValueByPattern "THIS-active" | cut -d- -f3 | cut -d= -f1)
 	echo $ACTIVATEDINSTANCES
 }
 THIS.isSingleActive() {

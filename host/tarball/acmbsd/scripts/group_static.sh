@@ -63,7 +63,7 @@ Group.getData() {
 }
 
 Group.groups.getActive() {
-	[ -z "$ACTIVATEDGROUPS" -o "$1" ] && ACTIVATEDGROUPS=`echo "$DATA" | grep -w activated | cut -d- -f1`
+	[ -z "$ACTIVATEDGROUPS" -o "$1" ] && ACTIVATEDGROUPS=$(cfg.getValueByPattern activated | cut -d- -f1)
 	echo $ACTIVATEDGROUPS
 }
 
