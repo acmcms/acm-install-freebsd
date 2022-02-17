@@ -1559,7 +1559,7 @@ case $COMMAND in
 	#COMMAND:INFREQ
 	preparebsd)
 		load.module conf pkg pgsql
-		echo Prepareing BSD...
+		echo "Prepareing BSD..."
 		mail.aliases.check
 
 		# conf.install profile.sh /etc/profile
@@ -1580,7 +1580,7 @@ case $COMMAND in
 		mail.check
 
 		pgsql.check
-		# csync.check
+		csync.check
 
 		out.info "Fresh system? Reboot your OS!"
 		echo

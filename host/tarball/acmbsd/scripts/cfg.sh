@@ -1,43 +1,43 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
+
+set -e
 
 load.module out
 
-DATAFILE=$ACMBSDPATH/data.conf
+DATAFILE="${ACMBSDPATH}/data.conf"
+[ -f "${DATAFILE}" ] || touch "${DATAFILE}"
 
+cfg.upgrade() {
+	cut -d'=' -f1 "${DATAFILE}" | grep -q '-' || return 0
+	while IFS= read -r LINE; do
+		[ "${LINE}" ] || continue
+		local KEY=$(echo "$LINE" | cut -d'=' -f1 | tr '-' '_')
+		local VALUE=$(echo "$LINE" | cut -d'=' -f2)
+		[ "${KEY}" -a "${VALUE}" ] || continue
+		echo "${KEY}=${VALUE}"
+	done < "${DATAFILE}" | sort > "${DATAFILE}.bak"
+	mv "${DATAFILE}.bak" "${DATAFILE}"
+}
+cfg.upgrade
+
+cfg.norm() {
+	echo "${1}" | tr '-' '_'
+}
 cfg.reload() {
-	if [ -f "$DATAFILE" ]; then
-		local CKSUM=`md5 -q $DATAFILE`
-		if [ "$DATAFILECKSUM" != "$CKSUM" ]; then
-			DATAFILECKSUM=$CKSUM
-			DATA=`cat $DATAFILE`
-		fi
-		return 0
-	else
-		return 1
-	fi
-}
-cfg.remove() {
-	[ "$1" ] && DATA=`echo "$DATA" | sed -l "/$1/d"` && echo "$DATA" > $DATAFILE && return 0 || return 1
-}
-cfg.setValue() {
-	[ "$1" -a "$2" ] || return 1
-	DATA=`echo "$DATA" | sed -l "/$1=/d"`
-	if [ "$DATA" ]; then
-		printf "$1=$2\n$DATA\n" > $DATAFILE
-	else
-		echo "$1=$2" > $DATAFILE
-	fi
-	DATA=`cat $DATAFILE`
 	return 0
 }
-#TODO: config test case
-cfg.getValue() {
-	[ "$1" ] && TMPDATA=`echo -n "$DATA" | fgrep -w $1` || return 1
-	#TODO: 'cut' always return true
-	echo -n "$TMPDATA" | cut -d= -f2 && return 0 || return 1
+cfg.setValue() {
+	[ "${1}" ] || return 1
+	[ "${2}" ] || return 1
+	sysrc -f "${DATAFILE}" -q "$(cfg.norm "${1}")=${2}" || return 1
 }
-
-[ ! -f "$DATAFILE" ] && touch $DATAFILE
-cfg.reload
+cfg.getValue() {
+	[ "${1}" ] || return 1
+	sysrc -f "${DATAFILE}" -q -n "$(cfg.norm "${1}")" || return 1
+}
+cfg.remove() {
+	[ "${1}" ] || return 1
+	sysrc -f "${DATAFILE}" -q -x "$(cfg.norm "${1}")" || return 1
+}
 
 #out.message 'cfg: module loaded'
