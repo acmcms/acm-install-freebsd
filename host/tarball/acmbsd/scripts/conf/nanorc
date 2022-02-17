@@ -1,6 +1,5 @@
 set historylog
 set nowrap
-set smooth
 set suspend
 set tabsize 4
 # set softwrap

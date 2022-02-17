@@ -138,7 +138,10 @@ Network.getIPList() {
 	/sbin/ifconfig | fgrep -w inet | cut -d' ' -f2 | grep -oE "\b$IPOCT\.$IPOCT\.$IPOCT\.$LASTIPOCT\b" | grep -v 127.0.0.1 | grep -v 172.16.0
 }
 Network.getFreeIPList() {
-	local BUSYIP="$(cfg.getValue extip)"
+	local BUSYIP
+	for GROUPNAME in ${ACTIVATEDGROUPS}; do
+		BUSYIP="${BUSYIP}$(cfg.getValue extip) "
+	done
 	local FIRST=true
 	for ITEM in $(Network.getIPList); do
 		if ! echo "$BUSYIP" | fgrep -qw $ITEM; then
@@ -1128,18 +1131,26 @@ case $COMMAND in
 				fi
 			fi
 		done
-		echo -n Check for free groups...
-		if [ -z "$FREEGROUPS" ]; then
-			out.status red "ALL IN USE"
-			out.info "All groups are already added!"
-			exit 1
-		else
-			out.status green FOUND
-		fi
+		# echo -n "Check for free groups..."
+		# if [ -z "$FREEGROUPS" ]; then
+		# 	out.status red "ALL IN USE"
+		# 	out.info "All groups are already added!"
+		# 	exit 1
+		# else
+		# 	out.status green FOUND
+		# fi
 		data.setTo GROUPNAME
-		if Group.create $GROUPNAME && ! $GROUPNAME.isExist; then
-			if ! Console.isSettingExist extip && [ "`Network.getFreeIPList`" ]; then
-				for ITEM in `Network.getFreeIPList`; do
+		FREEIPLIST="$(Network.getFreeIPList)"
+		if Group.create $GROUPNAME; then
+			echo -n "Checking if group($GROUPNAME) exists..."
+			if $GROUPNAME.isExist; then
+				out.status green FOUND
+				exit 1
+			else
+				out.status yellow "NOT FOUND"
+			fi
+			if ! Console.isSettingExist extip && [ "${FREEIPLIST}" ]; then
+				for ITEM in ${FREEIPLIST}; do
 					$GROUPNAME.add -extip=$ITEM
 					break
 				done
@@ -1148,9 +1159,6 @@ case $COMMAND in
 			fi
 			out.info "group '$GROUPNAME' is added, you can change group setting by '$SCRIPTNAME config $GROUPNAME'!"
 		else
-			if ! $GROUPNAME.isExist; then
-				echo "ERROR: already exists!"
-			fi
 			cat <<-EOF
 				Settings info:
 				 	-extip=192.168.1.1 - IP-address that not used by acm.cm already
@@ -1164,14 +1172,13 @@ case $COMMAND in
 				 	extended - 2 instances running, but traffic pass only to one, soft restart
 				 	parallel - 2 or more instances running, soft restart
 
-				Free groups: $FREEGROUPS
-				Free IP-addresses: `Network.getFreeIPList`
+				Free groups: ${FREEGROUPS}
+				Free IP-addresses: ${FREEIPLIST}
 
 				Example: $SCRIPTNAME $COMMAND {groupname} -extip=192.168.1.1 [-branch=release] [-memory=512m] [-type=standard]
 			EOF
-			return 1
+			exit 1
 		fi
-		return 0
 	;;
 	#COMMAND:EVERYDAY
 	status)
