@@ -1,4 +1,4 @@
-#!/usr/sh -x
+#!/usr/sh -e
 
 load.module out
 

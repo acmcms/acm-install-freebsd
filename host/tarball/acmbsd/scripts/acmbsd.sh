@@ -1148,6 +1148,9 @@ case $COMMAND in
 			fi
 			out.info "group '$GROUPNAME' is added, you can change group setting by '$SCRIPTNAME config $GROUPNAME'!"
 		else
+			if ! $GROUPNAME.isExist; then
+				echo "ERROR: already exists!"
+			fi
 			cat <<-EOF
 				Settings info:
 				 	-extip=192.168.1.1 - IP-address that not used by acm.cm already
@@ -1166,6 +1169,7 @@ case $COMMAND in
 
 				Example: $SCRIPTNAME $COMMAND {groupname} -extip=192.168.1.1 [-branch=release] [-memory=512m] [-type=standard]
 			EOF
+			return 1
 		fi
 		return 0
 	;;
