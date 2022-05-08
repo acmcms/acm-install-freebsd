@@ -497,7 +497,7 @@ THIS.remove() {
 	done
 	pw groupdel THIS
 	echo -n Removing group data from DB...
-	cfg.remove THIS-
+	cfg.removeByPattern THIS-
 	out.status green DONE
 	echo -n Removing public folder...
 #		rm -rdf $THIS_PROTECTED > /dev/null 2>&1

@@ -242,21 +242,22 @@ System.changeRights() {
 	out.status green DONE && return 0
 }
 Network.git.fetch() {
-	if [ -d ${2}/.git ]; then
-		cd ${2}
-		git pull || return 1
+	if [ -d "${2}/.git" ]; then
+		System.changeRights "${2}" acmbsd acmbsd 'a=rX,ug+w'
+		cd "${2}"
+		sudo -u acmbsd git pull || return 1
 	else
-		if [ -d ${2} ]; then
+		if [ -d "${2}" ]; then
 			rm -rdf "${ACMCM5PATH}/${2}" || return 1
 		fi
-		git clone ${1} ${2} || return 1
+		sudo -u acmbsd git clone "${1}" "${2}" || return 1
 	fi
 }
 cvsacmcm() {
 	ONLYCHECK=$3
 	RETVAL=0
-	System.fs.dir.create $ACMCM5PATH > /dev/null 2>&1
-	cd $ACMCM5PATH
+	System.fs.dir.create "${ACMCM5PATH}" > /dev/null 2>&1
+	cd "${ACMCM5PATH}"
 	out.message "Fetching ACM.CM5 (export-$1) version..." waitstatus
 	LATEST_VERSION=$(fetch https://raw.githubusercontent.com/acmcms/export-${1}/master/version/version -qo -)
 	if [ "$LATEST_VERSION" ]; then
@@ -264,7 +265,7 @@ cvsacmcm() {
 		if [ "`echo $OPTIONS | fgrep -w force`" -o -z "$ONLYCHECK" -a "$2" != $LATEST_VERSION ]; then
 			out.message "ACM.CM5 (export-$1) version: Latest - '$LATEST_VERSION', Local - '$2'"
 			out.message "Fetching latest ACM.CM5 (export-$1)..."
-			if Network.git.fetch https://github.com/acmcms/export-$1 $1; then
+			if Network.git.fetch "https://github.com/acmcms/export-${1}" "${1}"; then
 				out.message 'Finish...' waitstatus
 				out.status green OK
 			else
