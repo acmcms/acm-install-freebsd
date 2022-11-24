@@ -5,18 +5,18 @@ load.module out
 DATAFILE="${ACMBSDPATH}/data.conf"
 [ -f "${DATAFILE}" ] || touch "${DATAFILE}"
 
-cfg.upgrade() {
-	cut -d'=' -f1 "${DATAFILE}" | grep -q '-' || return 0
-	while IFS= read -r LINE; do
-		[ "${LINE}" ] || continue
-		local KEY=$(echo "$LINE" | cut -d'=' -f1 | tr '-' '_')
-		local VALUE=$(echo "$LINE" | cut -d'=' -f2)
-		[ "${KEY}" -a "${VALUE}" ] || continue
-		echo "${KEY}=${VALUE}"
-	done < "${DATAFILE}" | sort > "${DATAFILE}.bak"
-	mv "${DATAFILE}.bak" "${DATAFILE}"
-}
-cfg.upgrade
+# cfg.upgrade() {
+# 	cut -d'=' -f1 "${DATAFILE}" | grep -q '-' || return 0
+# 	while IFS= read -r LINE; do
+# 		[ "${LINE}" ] || continue
+# 		local KEY=$(echo "$LINE" | cut -d'=' -f1 | tr '-' '_')
+# 		local VALUE=$(echo "$LINE" | cut -d'=' -f2)
+# 		[ "${KEY}" -a "${VALUE}" ] || continue
+# 		echo "${KEY}=${VALUE}"
+# 	done < "${DATAFILE}" | sort > "${DATAFILE}.bak"
+# 	mv "${DATAFILE}.bak" "${DATAFILE}"
+# }
+# cfg.upgrade
 
 cfg.norm() {
 	echo "${1}" | tr '-' '_'
