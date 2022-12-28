@@ -71,7 +71,7 @@ else
 fi
 
 myx.common lib/fetchStdout https://github.com/acmcms/acm-install-freebsd/archive/master.tar.gz | \
-		tar zxvf - -C /usr/local/ --include "*/host/tarball/*" --strip-components 3
+		tar zxvf - -C "/usr/local/" --include "*/host/tarball/*" --strip-components 3
 
 
 ######################################
