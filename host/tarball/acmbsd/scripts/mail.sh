@@ -56,7 +56,7 @@ mail.sendfile() {
 	SUBJECT="ACMBSD on `uname -n`: $2"
 	echo $3 > /tmp/msgbody
 	for MAILTO in $ADMINMAIL; do
-		metasend -b -s "$SUBJECT" -S 99999999 -f /tmp/msgbody -m text/plain -e none -n -f $1 -m text/plain -e base64 -t $MAILTO
+		/usr/local/bin/metasend -b -s "$SUBJECT" -S 99999999 -f /tmp/msgbody -m text/plain -e none -n -f $1 -m text/plain -e base64 -t $MAILTO
 	done
 }
 
