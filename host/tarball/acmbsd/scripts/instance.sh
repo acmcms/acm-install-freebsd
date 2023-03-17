@@ -156,6 +156,7 @@ THIS.startDaemon() {
 	PROGEXEC="$PROGEXEC -Dru.myx.ae3.properties.ip.wildcard.host=$THIS_INTIP"
 	PROGEXEC="$PROGEXEC -Dru.myx.ae3.properties.ip.public.host=`${THIS_GROUPNAME}.getExtIP`"
 	# PROGEXEC="$PROGEXEC -Dru.myx.ae3.properties.ip.cluster.host=`farm.getClusterIP`"
+	PROGEXEC="$PROGEXEC -Dru.myx.ae3.properties.ip.cluster.host=$THIS_INTIP"
 	PROGEXEC="$PROGEXEC -Dru.myx.ae3.properties.ip.shift.port=14000"
 	PROGEXEC="$PROGEXEC -Dru.myx.ae3.properties.path.private=$THIS_HOME"
 	PROGEXEC="$PROGEXEC -Dru.myx.ae3.properties.path.shared=$SHAREDPATH"
