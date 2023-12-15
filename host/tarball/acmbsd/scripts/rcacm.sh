@@ -1,4 +1,9 @@
 #!/bin/sh
+
+# PROVIDE: acmbsd
+# REQUIRE: LOGIN NETWORKING SERVERS DAEMON FILESYSTEMS
+# KEYWORD: shutdown
+
 ACMBSDSCRIPT="/usr/local/bin/acmbsd"
 echo
 case ${1} in
