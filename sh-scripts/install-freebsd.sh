@@ -118,6 +118,7 @@ nohup -- sh -c 'kldload ipfw_nat || true; service ipfw start || /usr/local/etc/i
 cat nohup.out
 
 
+sysrc acmbsd_enable="YES"
 bash /usr/local/acmbsd/scripts/acmbsd.sh preparebsd
 bash /usr/local/acmbsd/scripts/acmbsd.sh install -noupdate
 
