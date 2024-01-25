@@ -1546,7 +1546,8 @@ case $COMMAND in
 			$0 update all
 		fi
 		scriptlink /usr/local/bin/acmbsd $ACMBSDPATH/scripts/acmbsd.sh
-		scriptlink /usr/local/etc/rc.d/rcacm.sh $ACMBSDPATH/scripts/rcacm.sh
+		scriptlink /usr/local/etc/rc.d/acmbsd $ACMBSDPATH/scripts/rcacm.sh
+		rm -rf /usr/local/etc/rc.d/rcacm.sh
 		Watchdog.restart
 		echo
 	;;
