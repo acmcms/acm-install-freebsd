@@ -1,6 +1,6 @@
 set historylog
 set nowrap
-set suspend
+# set suspend
 set tabsize 4
 # set softwrap
 include "/usr/local/share/nano/nanorc.nanorc"
