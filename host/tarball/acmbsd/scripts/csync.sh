@@ -38,7 +38,11 @@ csync.syncinit() {
 csync.crontab() {
 	local TIME=15
 	[ "$1" ] && TIME=$1
-	echo "*/$TIME * * * * root /usr/sbin/daemon -p $CSYNCPIDFILE /usr/local/sbin/csync2 -vxr"
+	echo "*/$TIME * * * * root /usr/sbin/daemon -p $CSYNCPIDFILE /usr/local/bin/acmbsd cluster csynccron"
+}
+csync.cronsync() {
+	/usr/local/sbin/csync2 -T
+	/usr/local/sbin/csync2 -rx
 }
 
 csync.makecert() {

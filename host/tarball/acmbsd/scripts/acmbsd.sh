@@ -2332,6 +2332,9 @@ case $COMMAND in
 				test -z "$HOST" && Syntax.cluster && exit 1
 				csync.syncinit $HOST
 			;;
+			csynccron)
+				csync.cronsync
+			;;
 			meetold)
 #				if System.requirePermission ; then
 #				fi
