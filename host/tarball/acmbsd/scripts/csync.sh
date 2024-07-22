@@ -38,7 +38,7 @@ csync.syncinit() {
 	fi
 }
 csync.crontab() {
-	local TIME=15
+	local TIME=5
 	[ "$1" ] && TIME=$1
 	echo "*/$TIME * * * * root /usr/sbin/daemon -p $CSYNCPIDFILE /usr/local/bin/acmbsd cluster csynccron"
 }
