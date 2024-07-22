@@ -1,6 +1,8 @@
 #!/bin/sh
 
 CSYNCPIDFILE=$LOCKDIRPATH/csync.pid
+CSYNCLOGFILE=/var/log/csync2.log
+
 csync.sync() {
 	/usr/sbin/daemon -p $CSYNCPIDFILE /usr/local/sbin/csync2 -vrx && [ -z "$1" ] && return 0
 	sleep 1
@@ -41,8 +43,14 @@ csync.crontab() {
 	echo "*/$TIME * * * * root /usr/sbin/daemon -p $CSYNCPIDFILE /usr/local/bin/acmbsd cluster csynccron"
 }
 csync.cronsync() {
-	/usr/local/sbin/csync2 -T
-	/usr/local/sbin/csync2 -rx
+	echo "Stage 1: Remove files from database which do not match config entries:" > $CSYNCLOGFILE
+	/usr/local/sbin/csync2 -vR >> $CSYNCLOGFILE 2>&1
+	echo >> $CSYNCLOGFILE
+	echo "Stage 2: Run checks for all given files and update remote hosts:" >> $CSYNCLOGFILE
+	/usr/local/sbin/csync2 -vrx >> $CSYNCLOGFILE 2>&1
+	if grep -q -e "Removing " -e "Updating " $CSYNCLOGFILE || grep 'Finished with' $CSYNCLOGFILE | grep -qv "Finished with 0 errors."; then
+		cat $CSYNCLOGFILE
+	fi
 }
 
 csync.makecert() {
