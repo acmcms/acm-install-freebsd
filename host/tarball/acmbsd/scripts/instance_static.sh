@@ -27,7 +27,7 @@ Instance.getData() {
 		DAEMONPID=$(cat ${DAEMONFLAG})
 	fi
 	INSTANCENUMBER=$(echo ${INSTANCE} | tr -d "[a-z]")
-	INTIP="172.16.0.$((${GROUPID}+${INSTANCENUMBER}-1))"
+	INTIP="127.0.${GROUPID}.${INSTANCENUMBER}"
 }
 
 Instance.isExist() {
