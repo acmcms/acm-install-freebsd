@@ -48,7 +48,7 @@ service sysctl restart
 pkg install -y \
 	sudo bash nano screen curl rsync ncdu \
 	postfix metamail rlwrap elinks \
-	xtail mtr-nox11 p5-ack \
+	xtail mtr-nox11 ripgrep tig \
 	smartmontools diffutils \
 	tinc openjdk17 bind918
 
