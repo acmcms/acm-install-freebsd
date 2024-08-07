@@ -161,11 +161,11 @@ Report.system() {
 	EOF
 }
 Report.connections() {
-	SOCKSTATDATA=$(sockstat | fgrep java)
-	DBCONN=$(echo "${SOCKSTATDATA}" | fgrep 5432 | wc -l | tr -d ' ')
+	SOCKSTATDATA=$(sockstat -46 -c | grep -F 'java')
+	DBCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:5432$' | wc -l | tr -d ' ')
+	MAILCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:25$' | wc -l | tr -d ' ')
 	DBMAXCONN=$(cat ${PGDATAPATH}/postgresql.conf | grep 'max_connections =' | tr '\t' ' ' | cut -d ' ' -f 3)
-	ACMINCONN=$(echo "${SOCKSTATDATA}" | fgrep -v 5432 | fgrep -v '*' | fgrep 172.16.0 | wc -l | tr -d ' ')
-	ACMOUTCONN=$(echo "${SOCKSTATDATA}" | fgrep -v 5432 | fgrep -v '*' | fgrep -v 172.16.0 | fgrep -v 127.0.0 | fgrep tcp4 | wc -l | tr -d ' ')
+	ACMCONN=$(echo "${SOCKSTATDATA}" | grep -v -e '\s127.0.0.1:25$' -e '\s127.0.0.1:5432$' | wc -l | tr -d ' ')
 	cat <<-EOF
 		<p>
 			<b>CONNECTIONS:</b>
@@ -173,13 +173,13 @@ Report.connections() {
 			<table cellspacing="1" cellpadding="3" border="1">
 				<tr>
 					<th>PGSQL</th>
-					<th>ACM.CM IN</th>
-					<th>ACM.CM OUT</th>
+					<th>MAIL</th>
+					<th>ACM.CM</th>
 				</tr>
 				<tr>
 					<td>${DBCONN}/${DBMAXCONN}</td>
-					<td>${ACMINCONN}</td>
-					<td>${ACMOUTCONN}</td>
+					<td>${MAILCONN}</td>
+					<td>${ACMCONN}</td>
 				</tr>
 			</table>
 		</p>
@@ -217,6 +217,7 @@ Report.diskusage() {
 }
 Report.groups() {
 	DUDATA=$(nice -n 30 du -ch -d 3 ${DEFAULTGROUPPATH})
+	SOCKSTATDATA=$(sockstat -46 -c | grep -F 'java')
 	for GROUPNAME in ${GROUPS} ; do
 		Group.getData ${GROUPNAME}
 		ACMBACKUPVERSION="-"
@@ -228,8 +229,9 @@ Report.groups() {
 		else
 			ACTIVATED=false
 		fi
-		DBCONN=$(echo "${SOCKSTATDATA}" | fgrep 5432 | fgrep ${GROUPNAME} | wc -l | tr -d ' ')
-		ACMCONN=$(echo "${SOCKSTATDATA}" | fgrep -v 5432 | fgrep -v '*' | fgrep '172.16.0' | fgrep ${GROUPNAME} | wc -l | tr -d ' ')
+		DBCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:5432$' | grep "^${GROUPNAME}[0-9]\s" | wc -l | tr -d ' ')
+		MAILCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:25$' | grep "^${GROUPNAME}[0-9]\s" | wc -l | tr -d ' ')
+		ACMCONN=$(echo "${SOCKSTATDATA}" | | grep -v -e '\s127.0.0.1:25$' -e '\s127.0.0.1:5432$' | grep "^${GROUPNAME}[0-9]\s" | wc -l | tr -d ' ')
 
 		Print.instance() {
 			for INSTANCE in ${INSTANCELIST} ; do
@@ -263,8 +265,9 @@ Report.groups() {
 				if [ "${ONLINE}" = "offline" -a -f "${PRIVATE}/lastuptime" ]; then
 					UPTIME=$(cat ${PRIVATE}/lastuptime)
 				fi
-				DBCONN=$(echo "${SOCKSTATDATA}" | fgrep 5432 | fgrep ${INSTANCE} | wc -l | tr -d ' ')
-				ACMCONN=$(echo "${SOCKSTATDATA}" | fgrep -v 5432 | fgrep -v '*' | fgrep '172.16.0' | fgrep ${INSTANCE} | wc -l | tr -d ' ')
+				DBCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:5432$' | grep "^${INSTANCE}\s" | wc -l | tr -d ' ')
+				MAILCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:25$' | grep "^${INSTANCE}\s" | wc -l | tr -d ' ')
+				ACMCONN=$(echo "${SOCKSTATDATA}" | | grep -v -e '\s127.0.0.1:25$' -e '\s127.0.0.1:5432$' | grep "^${INSTANCE}\s" | wc -l | tr -d ' ')
 				cat <<-EOF
 					<tr>
 						<td>${INSTANCE}</td>
@@ -274,6 +277,7 @@ Report.groups() {
 						<td>${INSTANCEDATASIZE}</td>
 						<td>${UPTIME}</td>
 						<td>${DBCONN}</td>
+						<td>${MAILCONN}</td>
 						<td>${ACMCONN}</td>
 					</tr>
 				EOF
@@ -295,6 +299,7 @@ Report.groups() {
 						<th>BRANCH</th>
 						<th>TYPE</th>
 						<th>DBCONN</th>
+						<th>MAILCONN</th>
 						<th>ACMCONN</th>
 					</tr>
 					<tr>
@@ -306,6 +311,7 @@ Report.groups() {
 						<td>${BRANCH}</td>
 						<td>${TYPE}</td>
 						<td>${DBCONN}</td>
+						<td>${MAILCONN}</td>
 						<td>${ACMCONN}</td>
 					</tr>
 				</table>
@@ -318,6 +324,7 @@ Report.groups() {
 						<th>DATASIZE</th>
 						<th>UPTIME</th>
 						<th>DBCONN</th>
+						<th>MAILCONN</th>
 						<th>ACMCONN</th>
 					</tr>
 					`Print.instance`
