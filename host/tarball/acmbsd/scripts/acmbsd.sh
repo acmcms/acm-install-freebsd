@@ -245,12 +245,12 @@ Network.git.fetch() {
 	if [ -d "${2}/.git" ]; then
 		System.changeRights "${2}" acmbsd acmbsd 'a=rX,ug+w'
 		cd "${2}"
-		sudo -u acmbsd git pull || return 1
+		sudo -H -u acmbsd git pull || return 1
 	else
 		if [ -d "${2}" ]; then
 			rm -rdf "${ACMCM5PATH}/${2}" || return 1
 		fi
-		sudo -u acmbsd git clone "${1}" "${2}" || return 1
+		sudo -H -u acmbsd git clone "${1}" "${2}" || return 1
 	fi
 }
 cvsacmcm() {
