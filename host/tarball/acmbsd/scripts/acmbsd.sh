@@ -2400,11 +2400,13 @@ case $COMMAND in
 		data.setTo GROUPNAME FILES +
 		[ -z "$GROUPNAME" ] && out.error 'can not find group' && exit 1
 		[ -z "$FILES" ] && out.error 'no files given' && exit 1
+		FILES=$(echo $FILES | sed -e 's/%21/!/g' -e 's/%23/#/g' -e 's/%24/$/g')
 		Group.create $GROUPNAME
-		echo "CHOWN ${GROUPNAME}1:$GROUPNAME" > /tmp/csynchandler.log
+		echo "FILES: ${FILES}" > /tmp/csynchandler.log
+		echo "CHOWN ${GROUPNAME}1:$GROUPNAME" >> /tmp/csynchandler.log
 		chown -v ${GROUPNAME}1:$GROUPNAME ${FILES} >> /tmp/csynchandler.log
-		echo "CHMOD 770" >> /tmp/csynchandler.log
-		chmod -v 770 ${FILES} >> /tmp/csynchandler.log
+		echo "CHMOD ug=rwX,o=" >> /tmp/csynchandler.log
+		chmod -v ug=rwX,o= ${FILES} >> /tmp/csynchandler.log
 		echo $FILES | grep sudoers > /dev/null 2> /dev/null && chmod 0440 /usr/local/etc/sudoers
 		#mail.sendfile "/tmp/csynchandler.log" "Cluster '$GROUPNAME' synchandler log" "${FILES}"
 	;;
