@@ -231,7 +231,7 @@ Report.groups() {
 		fi
 		DBCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:5432$' | grep "^${GROUPNAME}[0-9]\s" | wc -l | tr -d ' ')
 		MAILCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:25$' | grep "^${GROUPNAME}[0-9]\s" | wc -l | tr -d ' ')
-		ACMCONN=$(echo "${SOCKSTATDATA}" | | grep -v -e '\s127.0.0.1:25$' -e '\s127.0.0.1:5432$' | grep "^${GROUPNAME}[0-9]\s" | wc -l | tr -d ' ')
+		ACMCONN=$(echo "${SOCKSTATDATA}" | grep -v -e '\s127.0.0.1:25$' -e '\s127.0.0.1:5432$' | grep "^${GROUPNAME}[0-9]\s" | wc -l | tr -d ' ')
 
 		Print.instance() {
 			for INSTANCE in ${INSTANCELIST} ; do
@@ -267,7 +267,7 @@ Report.groups() {
 				fi
 				DBCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:5432$' | grep "^${INSTANCE}\s" | wc -l | tr -d ' ')
 				MAILCONN=$(echo "${SOCKSTATDATA}" | grep '\s127.0.0.1:25$' | grep "^${INSTANCE}\s" | wc -l | tr -d ' ')
-				ACMCONN=$(echo "${SOCKSTATDATA}" | | grep -v -e '\s127.0.0.1:25$' -e '\s127.0.0.1:5432$' | grep "^${INSTANCE}\s" | wc -l | tr -d ' ')
+				ACMCONN=$(echo "${SOCKSTATDATA}" | grep -v -e '\s127.0.0.1:25$' -e '\s127.0.0.1:5432$' | grep "^${INSTANCE}\s" | wc -l | tr -d ' ')
 				cat <<-EOF
 					<tr>
 						<td>${INSTANCE}</td>
