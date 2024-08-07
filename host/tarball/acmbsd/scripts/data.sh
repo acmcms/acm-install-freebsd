@@ -30,7 +30,7 @@ data.setTo() {
 			EVAL="$KEY='"`eval echo '${'$KEY'}'`" $ITEM'"
 		else
 			COUNT=$((COUNT + 1))
-			EVAL="$KEY=$ITEM"
+			EVAL="$KEY='$ITEM'"
 		fi
 		eval $EVAL
 	done
