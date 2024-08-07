@@ -1180,37 +1180,38 @@ case $COMMAND in
 	;;
 	#COMMAND:EVERYDAY
 	status)
+		ELINKS_OPTIONS='-dump-width 200 -dump -no-home 1 -no-connect 1 -localhost 1 -anonymous 1'
 		case "${MODS}" in
 			full)
-				Report.system | elinks -dump-width 200 -dump
+				Report.system | elinks ${ELINKS_OPTIONS}
 				echo
-				Report.domains | elinks -dump-width 200 -dump
+				Report.domains | elinks ${ELINKS_OPTIONS}
 				echo
-				Report.daemons | elinks -dump-width 200 -dump
+				Report.daemons | elinks ${ELINKS_OPTIONS}
 				echo
-				Report.connections | elinks -dump-width 200 -dump
+				Report.connections | elinks ${ELINKS_OPTIONS}
 				echo
-				Report.diskusage | elinks -dump-width 200 -dump
+				Report.diskusage | elinks ${ELINKS_OPTIONS}
 				echo
-				Report.groups | elinks -dump-width 200 -dump
+				Report.groups | elinks ${ELINKS_OPTIONS}
 			;;
 			system)
-				Report.system | elinks -dump-width 200 -dump
+				Report.system | elinks ${ELINKS_OPTIONS}
 			;;
 			domains)
-				Report.domains | elinks -dump-width 200 -dump
+				Report.domains | elinks ${ELINKS_OPTIONS}
 			;;
 			daemons)
-				Report.daemons | elinks -dump-width 200 -dump
+				Report.daemons | elinks ${ELINKS_OPTIONS}
 			;;
 			connections)
-				Report.connections | elinks -dump-width 200 -dump
+				Report.connections | elinks ${ELINKS_OPTIONS}
 			;;
 			diskusage)
-				Report.diskusage | elinks -dump-width 200 -dump
+				Report.diskusage | elinks ${ELINKS_OPTIONS}
 			;;
 			groups)
-				Report.groups | elinks -dump-width 200 -dump
+				Report.groups | elinks ${ELINKS_OPTIONS}
 			;;
 			*)
 				out.info "paths: acmbsd - $ACMBSDPATH, groups - $DEFAULTGROUPPATH, shared - $SHAREDPATH"
