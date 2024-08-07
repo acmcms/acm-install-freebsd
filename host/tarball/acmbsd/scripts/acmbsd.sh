@@ -2398,6 +2398,8 @@ case $COMMAND in
 	csynchandler)
 		# setPermission after csync
 		data.setTo GROUPNAME FILES +
+		[ -z "$GROUPNAME" ] && out.error 'can not find group' && exit 1
+		[ -z "$FILES" ] && out.error 'no files given' && exit 1
 		Group.create $GROUPNAME
 		echo "CHOWN ${GROUPNAME}1:$GROUPNAME" > /tmp/csynchandler.log
 		chown -v ${GROUPNAME}1:$GROUPNAME ${FILES} >> /tmp/csynchandler.log
