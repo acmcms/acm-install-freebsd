@@ -2118,6 +2118,16 @@ case $COMMAND in
 		exit 1
 	;;
 	#COMMAND:DEVEL
+	shares)
+		data.setTo DOMAIN
+		if [ "$DOMAIN" ]; then
+			psql -c "SELECT * FROM cmShares" "${DOMAIN}" "${PGROOTUSER}"
+		else
+			out.syntax 'shares {domain}'
+			exit 1
+		fi
+	;;
+	#COMMAND:DEVEL
 	seqcorrect)
 		#TODO: use Console
 		if [ "$MODS" ]; then
