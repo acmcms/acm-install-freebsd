@@ -50,7 +50,7 @@ pkg install -y \
 	postfix metamail rlwrap elinks \
 	xtail mtr-nox11 ripgrep tig \
 	smartmontools diffutils \
-	tinc openjdk17 bind918
+	tinc openjdk21 bind918
 
 
 # ACMBSDPATH=/usr/local/acmbsd
