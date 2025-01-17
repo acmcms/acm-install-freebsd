@@ -2087,7 +2087,7 @@ case $COMMAND in
 				while true
 				do
 					sleep 1
-					if cat $DUMPFILE | grep 'JNI global references' > /dev/null 2>&1 ; then
+					if cat $DUMPFILE | grep 'JNI global ref' > /dev/null 2>&1 ; then
 						out.status green DONE
 						sleep 1
 						killbylockfile $TAILPIDFILE > /dev/null 2>&1
