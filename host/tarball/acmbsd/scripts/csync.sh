@@ -40,6 +40,7 @@ csync.syncinit() {
 csync.crontab() {
 	local TIME=5
 	[ "$1" ] && TIME=$1
+	echo "PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin"
 	echo "*/$TIME * * * * root /usr/sbin/daemon -p $CSYNCPIDFILE /usr/local/bin/acmbsd cluster csynccron"
 }
 csync.cronsync() {

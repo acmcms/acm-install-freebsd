@@ -2272,13 +2272,13 @@ case $COMMAND in
 			cron)
 				ENABLE=`getSettingValue enable`
 				test -z "$ENABLE" && Syntax.cluster && exit 1
-				if [ "$ENABLE" = true -o "$ENABLE" = yes ]; then
-					base.file.checkLine /etc/crontab csync "`csync.crontab`"
+				mkdir -p /usr/local/etc/cron.d
+				if [ "$ENABLE" = true ] || [ "$ENABLE" = yes ]; then
+					csync.crontab > /usr/local/etc/cron.d/csync
 					/etc/rc.d/cron restart
 				fi
-				if [ "$ENABLE" = false -o "$ENABLE" = no ]; then
-					cat /etc/crontab | sed -l "/csync2/d" > /tmp/crontab.tmp
-					mv /tmp/crontab.tmp /etc/crontab
+				if [ "$ENABLE" = false ] || [ "$ENABLE" = no ]; then
+					rm -f /usr/local/etc/cron.d/csync
 					/etc/rc.d/cron restart
 				fi
 			;;
