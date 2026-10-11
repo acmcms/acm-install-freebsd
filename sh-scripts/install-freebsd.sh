@@ -113,9 +113,9 @@ sysrc firewall_enable=YES
 sysrc firewall_script=/usr/local/etc/ipfw.sh
 sysrc firewall_type="open"
 
-rm -f nohup.out || true
-nohup -- sh -c 'kldload ipfw_nat || true; service ipfw start || /usr/local/etc/ipfw.sh || true'
-cat nohup.out
+rm -f nohup.out || :
+nohup -- sh -c 'kldload ipfw_nat || true; service ipfw start || /usr/local/etc/ipfw.sh || true' || :
+cat nohup.out 2>/dev/null || :
 
 
 sysrc acmbsd_enable="YES"
